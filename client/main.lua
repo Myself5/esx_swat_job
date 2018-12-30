@@ -595,8 +595,7 @@ function OpenFBIActionsMenu()
 					{label = _U('cone'),		value = 'prop_roadcone02a'},
 					{label = _U('barrier'),		value = 'prop_barrier_work05'},
 					{label = _U('spikestrips'),	value = 'p_ld_stinger_s'},
-					{label = _U('box'),			value = 'prop_boxpile_07d'},
-					{label = _U('cash'),		value = 'hei_prop_cash_crate_half_full'}
+					{label = _U('box'),			value = 'prop_boxpile_07d'}
 				}
 			}, function(data2, menu2)
 				local model     = data2.current.value
@@ -1764,8 +1763,7 @@ Citizen.CreateThread(function()
 		'prop_roadcone02a',
 		'prop_barrier_work05',
 		'p_ld_stinger_s',
-		'prop_boxpile_07d',
-		'hei_prop_cash_crate_half_full'
+		'prop_boxpile_07d'
 	}
 
 	while true do
