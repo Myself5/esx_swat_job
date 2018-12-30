@@ -80,7 +80,6 @@ Locales['fr'] = {
   ['barrier'] = 'barrière',
   ['spikestrips'] = 'herse',
   ['box'] = 'caisse',
-  ['cash'] = 'caisse',
 
   -- ID Card Menu
   ['name'] = 'nom: %s',
