@@ -1,5 +1,4 @@
 Locales['fr'] = {
-
   -- Cloakroom
   ['cloakroom'] = 'vestiaire',
   ['citizen_wear'] = 'tenue Civil',
