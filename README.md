@@ -6,6 +6,7 @@
 * [esx_datastore](https://github.com/ESX-Org/esx_datastore)
 * [esx_identity](https://github.com/ESX-Org/esx_identity)
 * [esx_license](https://github.com/ESX-Org/esx_license)
+* [esx_service](https://github.com/ESX-Org/esx_service)
 
 ## Download
 ### Using [fvm-installer](https://github.com/qlaffont/fvm-installer)
