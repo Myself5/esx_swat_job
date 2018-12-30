@@ -118,7 +118,7 @@ function OpenCloakroomMenu()
 		table.insert(elements, {label = _U('fbi_wear'), value = 'agent_wear'})
 	elseif grade == 'special' then
 		table.insert(elements, {label = _U('fbi_wear'), value = 'special_wear'})
-	elseif grade == 'supervisor ' then
+	elseif grade == 'supervisor' then
 		table.insert(elements, {label = _U('fbi_wear'), value = 'supervisor_wear'})
 	elseif grade == 'assistant' then
 		table.insert(elements, {label = _U('fbi_wear'), value = 'assistant_wear'})
