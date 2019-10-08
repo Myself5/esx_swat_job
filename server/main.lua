@@ -9,17 +9,6 @@ end
 TriggerEvent('esx_phone:registerNumber', 'fbi', _U('alert_fbi'), true, true)
 TriggerEvent('esx_society:registerSociety', 'fbi', 'FBI', 'society_fbi', 'society_fbi', 'society_fbi', {type = 'public'})
 
-RegisterServerEvent('esx_fbi_job:giveWeapon')
-AddEventHandler('esx_fbi_job:giveWeapon', function(weapon, ammo)
-	local xPlayer = ESX.GetPlayerFromId(source)
-	
-	if xPlayer.job.name == 'fbi' then
-		xPlayer.addWeapon(weapon, ammo)
-	else
-		print(('esx_fbi_job: %s attempted to give weapon!'):format(xPlayer.identifier))
-	end
-end)
-
 RegisterServerEvent('esx_fbi_job:confiscatePlayerItem')
 AddEventHandler('esx_fbi_job:confiscatePlayerItem', function(target, itemType, itemName, amount)
 	local _source = source
@@ -119,7 +108,6 @@ AddEventHandler('esx_fbi_job:getStockItem', function(itemName, count)
 	local sourceItem = xPlayer.getInventoryItem(itemName)
 
 	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_fbi', function(inventory)
-
 		local inventoryItem = inventory.getItem(itemName)
 
 		-- is there enough in the society?
@@ -146,7 +134,6 @@ AddEventHandler('esx_fbi_job:putStockItems', function(itemName, count)
 	local sourceItem = xPlayer.getInventoryItem(itemName)
 
 	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_fbi', function(inventory)
-
 		local inventoryItem = inventory.getItem(itemName)
 
 		-- does the player have enough of the item?
@@ -163,11 +150,8 @@ AddEventHandler('esx_fbi_job:putStockItems', function(itemName, count)
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:getOtherPlayerData', function(source, cb, target)
-
 	if Config.EnableESXIdentity then
-
 		local xPlayer = ESX.GetPlayerFromId(target)
-
 		local result = MySQL.Sync.fetchAll('SELECT firstname, lastname, sex, dateofbirth, height FROM users WHERE identifier = @identifier', {
 			['@identifier'] = xPlayer.identifier
 		})
@@ -205,9 +189,7 @@ ESX.RegisterServerCallback('esx_fbi_job:getOtherPlayerData', function(source, cb
 		else
 			cb(data)
 		end
-
 	else
-
 		local xPlayer = ESX.GetPlayerFromId(target)
 
 		local data = {
@@ -229,17 +211,17 @@ ESX.RegisterServerCallback('esx_fbi_job:getOtherPlayerData', function(source, cb
 		end)
 
 		cb(data)
-
 	end
-
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:getFineList', function(source, cb, category)
-	MySQL.Async.fetchAll('SELECT * FROM fine_types WHERE category = @category', {
-		['@category'] = category
-	}, function(fines)
-		cb(fines)
-	end)
+	if Config.EnablePoliceFine then
+		MySQL.Async.fetchAll('SELECT * FROM fine_types WHERE category = @category', {
+			['@category'] = category
+		}, function(fines)
+			cb(fines)
+		end)
+	end
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:getVehicleInfos', function(source, cb, plate)
@@ -351,13 +333,10 @@ ESX.RegisterServerCallback('esx_fbi_job:addArmoryWeapon', function(source, cb, w
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:removeArmoryWeapon', function(source, cb, weaponName)
-
 	local xPlayer = ESX.GetPlayerFromId(source)
-
 	xPlayer.addWeapon(weaponName, 500)
 
 	TriggerEvent('esx_datastore:getSharedDataStore', 'society_fbi', function(store)
-
 		local weapons = store.get('weapons')
 
 		if weapons == nil then
@@ -387,19 +366,140 @@ ESX.RegisterServerCallback('esx_fbi_job:removeArmoryWeapon', function(source, cb
 
 end)
 
+ESX.RegisterServerCallback('esx_fbi_job:buyWeapon', function(source, cb, weaponName, type, componentNum)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local authorizedWeapons, selectedWeapon = Config.AuthorizedWeapons[xPlayer.job.grade_name]
 
-ESX.RegisterServerCallback('esx_fbi_job:buy', function(source, cb, amount)
+	for k,v in ipairs(authorizedWeapons) do
+		if v.weapon == weaponName then
+			selectedWeapon = v
+			break
+		end
+	end
 
-	TriggerEvent('esx_addonaccount:getSharedAccount', 'society_fbi', function(account)
-		if account.money >= amount then
-			account.removeMoney(amount)
-			cb(true)
+	if not selectedWeapon then
+		print(('esx_fbi_job: %s attempted to buy an invalid weapon.'):format(xPlayer.identifier))
+		cb(false)
+	else
+		-- Weapon
+		if type == 1 then
+			if xPlayer.getMoney() >= selectedWeapon.price then
+				xPlayer.removeMoney(selectedWeapon.price)
+				xPlayer.addWeapon(weaponName, 100)
+
+				cb(true)
+			else
+				cb(false)
+			end
+
+		-- Weapon Component
+		elseif type == 2 then
+			local price = selectedWeapon.components[componentNum]
+			local weaponNum, weapon = ESX.GetWeapon(weaponName)
+
+			local component = weapon.components[componentNum]
+
+			if component then
+				if xPlayer.getMoney() >= price then
+					xPlayer.removeMoney(price)
+					xPlayer.addWeaponComponent(weaponName, component.name)
+
+					cb(true)
+				else
+					cb(false)
+				end
+			else
+				print(('esx_fbi_job: %s attempted to buy an invalid weapon component.'):format(xPlayer.identifier))
+				cb(false)
+			end
+		end
+	end
+end)
+
+ESX.RegisterServerCallback('esx_fbi_job:buyJobVehicle', function(source, cb, vehicleProps, type)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local price = getPriceFromHash(vehicleProps.model, xPlayer.job.grade_name, type)
+
+	-- vehicle model not found
+	if price == 0 then
+		print(('esx_fbi_job: %s attempted to exploit the shop! (invalid vehicle model)'):format(xPlayer.identifier))
+		cb(false)
+	else
+		if xPlayer.getMoney() >= price then
+			xPlayer.removeMoney(price)
+
+			MySQL.Async.execute('INSERT INTO owned_vehicles (owner, vehicle, plate, type, job, `stored`) VALUES (@owner, @vehicle, @plate, @type, @job, @stored)', {
+				['@owner'] = xPlayer.identifier,
+				['@vehicle'] = json.encode(vehicleProps),
+				['@plate'] = vehicleProps.plate,
+				['@type'] = type,
+				['@job'] = xPlayer.job.name,
+				['@stored'] = true
+			}, function (rowsChanged)
+				cb(true)
+			end)
 		else
 			cb(false)
 		end
-	end)
+	end
+end)
+
+ESX.RegisterServerCallback('esx_fbi_job:storeNearbyVehicle', function(source, cb, nearbyVehicles)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local foundPlate, foundNum
+
+	for k,v in ipairs(nearbyVehicles) do
+		local result = MySQL.Sync.fetchAll('SELECT plate FROM owned_vehicles WHERE owner = @owner AND plate = @plate AND job = @job', {
+			['@owner'] = xPlayer.identifier,
+			['@plate'] = v.plate,
+			['@job'] = xPlayer.job.name
+		})
+
+		if result[1] then
+			foundPlate, foundNum = result[1].plate, k
+			break
+		end
+	end
+
+	if not foundPlate then
+		cb(false)
+	else
+		MySQL.Async.execute('UPDATE owned_vehicles SET `stored` = true WHERE owner = @owner AND plate = @plate AND job = @job', {
+			['@owner'] = xPlayer.identifier,
+			['@plate'] = foundPlate,
+			['@job'] = xPlayer.job.name
+		}, function (rowsChanged)
+			if rowsChanged == 0 then
+				print(('esx_fbi_job: %s has exploited the garage!'):format(xPlayer.identifier))
+				cb(false)
+			else
+				cb(true, foundNum)
+			end
+		end)
+	end
 
 end)
+
+function getPriceFromHash(hashKey, jobGrade, type)
+	if type == 'car' then
+		local vehicles = Config.AuthorizedVehicles[jobGrade]
+		local shared = Config.AuthorizedVehicles['Shared']
+
+		for k,v in ipairs(vehicles) do
+			if GetHashKey(v.model) == hashKey then
+				return v.price
+			end
+		end
+
+		for k,v in ipairs(shared) do
+			if GetHashKey(v.model) == hashKey then
+				return v.price
+			end
+		end
+	end
+
+	return 0
+end
 
 ESX.RegisterServerCallback('esx_fbi_job:getStockItems', function(source, cb)
 	TriggerEvent('esx_addoninventory:getSharedInventory', 'society_fbi', function(inventory)
