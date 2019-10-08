@@ -8,7 +8,6 @@ Config.MarkerColor                = { r = 255, g = 255, b = 255 }
 Config.EnablePlayerManagement     = false
 Config.EnableArmoryManagement     = false
 Config.EnableESXIdentity          = false -- enable if you're using esx_identity
-Config.EnableSocietyOwnedVehicles = false
 Config.EnableLicenses             = false -- enable if you're using esx_license
 
 Config.EnableHandcuffTimer        = true -- enable handcuff timer ? will unrestrain player after the time ends
@@ -25,7 +24,7 @@ Config.FBIStations = {
 	FBI = {
 
 		Blip = {
-			Pos     = vector3(112.1, -749.3, 45.7),
+			Coords  = vector3(112.1, -749.3, 45.7),
 			Sprite  = 88,
 			Display = 4,
 			Scale   = 0.8,
