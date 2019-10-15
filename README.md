@@ -2,6 +2,8 @@
 
 This script was created using the [esx_policejob](https://github.com/ESX-Org/esx_policejob) script.
 
+[Click here to read this document in French.](https://github.com/ESX-FRANCE/esx_fbi_job/wiki/README---Fran%C3%A7ais)
+
 ## Requirements
 * [esx_billing](https://github.com/ESX-Org/esx_billing)
 * [esx_society](https://github.com/ESX-Org/esx_society)
