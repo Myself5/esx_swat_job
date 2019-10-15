@@ -17,7 +17,7 @@ Config.EnableJobBlip              = true -- enable blips for colleagues, require
 Config.EnablePoliceFine           = true -- enable fine, requires esx_policejob
 
 Config.MaxInService               = -1
-Config.Locale                     = 'fr' -- replace with the agreed language, available in the locales/ folder
+Config.Locale                     = 'fr' -- replace with the agreed language, available in the locales/ folder. example 'en'.
 
 Config.FBIStations = {
 
