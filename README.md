@@ -1,5 +1,7 @@
 # esx_fbi_job
 
+This script was created using the [esx_policejob](https://github.com/ESX-Org/esx_policejob) script.
+
 ## Requirements
 * [esx_billing](https://github.com/ESX-Org/esx_billing)
 * [esx_society](https://github.com/ESX-Org/esx_society)
