@@ -5,10 +5,10 @@ Config.MarkerType                 = 1
 Config.MarkerSize                 = { x = 1.5, y = 1.5, z = 1.0 }
 Config.MarkerColor                = { r = 255, g = 255, b = 255 }
 
-Config.EnablePlayerManagement     = false
-Config.EnableArmoryManagement     = false
-Config.EnableESXIdentity          = false -- enable if you're using esx_identity
-Config.EnableLicenses             = false -- enable if you're using esx_license
+Config.EnablePlayerManagement     = true
+Config.EnableArmoryManagement     = true
+Config.EnableESXIdentity          = true -- enable if you're using esx_identity
+Config.EnableLicenses             = true -- enable if you're using esx_license
 
 Config.EnableHandcuffTimer        = true -- enable handcuff timer ? will unrestrain player after the time ends
 Config.HandcuffTimer              = 10 * 60000 -- 10 mins
@@ -32,17 +32,17 @@ Config.FBIStations = {
 		},
 
 		Cloakrooms = {
-			vector3(152.0, -736.1, 241.1)
+			vector3(152.0, -736.1, 242.1)
 		},
 
 		Armories = {
-			vector3(143.6, -764.3, 241.1)
+			vector3(143.6, -764.3, 242.1)
 		},
 
 		Vehicles = {
 			{
-				Spawner = vector3(95.5, -723.7, 32.1),
-				InsideShop = vector3(95.5, -723.7, 32.1),
+				Spawner = vector3(95.5, -723.7, 33.1),
+				InsideShop = vector3(154.3, -697.7, 33.1),
 				SpawnPoints = {
 					{ coords = vector3(100.1, -729.4, 32.7), heading = 340.8, radius = 6.0 },
 					{ coords = vector3(104.0, -730.8, 32.7), heading = 340.8, radius = 6.0 },
@@ -52,15 +52,13 @@ Config.FBIStations = {
 		},
 
 		BossActions = {
-			vector3(148.9, -758.5, 241.1)
+			vector3(148.9, -758.5, 242.1)
 		},
 
 		Elevator = {
-			{
-				Top = vector3(136.0, -761.8, 241.1),
-				Down = vector3(136.0, -761.5, 44.7),
-				Parking = vector3(65.4, -749.6, 30.6)
-			}
+			vector3(136.0, -761.8, 241.1),
+			vector3(136.0, -761.5, 44.7),
+			vector3(65.4, -749.6, 30.6)
 		}
 	}
 }
