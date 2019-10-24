@@ -1724,14 +1724,18 @@ Citizen.CreateThread(function()
 					local distanceDown = GetDistanceBetweenCoords(coords, v.Elevator[i].Down, true)
 					local distanceParking = GetDistanceBetweenCoords(coords, v.Elevator[i].Parking, true)
 
-					if distance < Config.DrawDistance then
+					if distanceTop < Config.DrawDistance then
 						DrawMarker(Config.MarkerType, v.Elevator[i].Top, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
+						letSleep = false
+					elseif distanceDown < Config.DrawDistance then
 						DrawMarker(Config.MarkerType, v.Elevator[i].Down, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
+						letSleep = false
+					elseif distanceParking < Config.DrawDistance
 						DrawMarker(Config.MarkerType, v.Elevator[i].Parking, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
 						letSleep = false
 					end
 
-					if distance < Config.MarkerSize.x then
+					if (distanceTop or distanceDown or distanceParking) < Config.MarkerSize.x then
 						isInMarker, currentStation, currentPart, currentPartNum = true, k, 'Elevator', i
 					end
 				end
