@@ -191,7 +191,7 @@ Locales['fr'] = {
   ['fbi_stock'] = 'coffre du fbi',
   -- Misc
   ['remove_prop'] = 'appuyez sur ~INPUT_CONTEXT~ pour enlever l\'objet',
-  ['map_blip'] = 'Commissariat',
+  ['map_blip'] = 'FBI',
   ['unrestrained_timer'] = 'vous sentez que vos menottes deviennent fragiles.',
   -- Notifications
   ['alert_fbi'] = 'alerte fbi',
