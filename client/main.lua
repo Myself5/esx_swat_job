@@ -88,8 +88,7 @@ function OpenCloakroomMenu()
 
 	ESX.UI.Menu.CloseAll()
 
-	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'cloakroom',
-	{
+	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'cloakroom', {
 		title    = _U('cloakroom'),
 		align    = 'top-left',
 		elements = elements
@@ -209,7 +208,7 @@ function OpenArmoryMenu(station)
 		elseif data.current.value == 'put_weapon' then
 			OpenPutWeaponMenu()
 		elseif data.current.value == 'buy_weapons' then
-			OpenBuyWeaponsMenu(station)
+			OpenBuyWeaponsMenu()
 		elseif data.current.value == 'put_stock' then
 			OpenPutStocksMenu()
 		elseif data.current.value == 'get_stock' then
@@ -403,13 +402,12 @@ function StoreNearbyVehicle(playerCoords)
 	end, vehiclePlates)
 end
 
-
-function GetAvailableVehicleSpawnPoint(station, partNum)
-	local spawnPoints = Config.FBIStations[station].Vehicles[partNum].SpawnPoints
+function GetAvailableVehicleSpawnPoint(station, part, partNum)
+	local spawnPoints = Config.FBIStations[station][part][partNum].SpawnPoints
 	local found, foundSpawnPoint = false, nil
 
 	for i=1, #spawnPoints, 1 do
-		if ESX.Game.IsSpawnPointClear(spawnPoints[i], spawnPoints[i].radius) then
+		if ESX.Game.IsSpawnPointClear(spawnPoints[i].coords, spawnPoints[i].radius) then
 			found, foundSpawnPoint = true, spawnPoints[i]
 			break
 		end
@@ -480,7 +478,7 @@ function OpenShopMenu(elements, restoreCoords, shopCoords)
 		DeleteSpawnedVehicles()
 		WaitForVehicleToLoad(data.current.model)
 
-		ESX.Game.SpawnLocalVehicle(data.current.model, shopCoords, 0.0, function(vehicle)
+		ESX.Game.SpawnLocalVehicle(data.current.model, shopCoords, 160.0, function(vehicle)
 			table.insert(spawnedVehicles, vehicle)
 			TaskWarpPedIntoVehicle(playerPed, vehicle, -1)
 			FreezeEntityPosition(vehicle, true)
@@ -494,7 +492,7 @@ function OpenShopMenu(elements, restoreCoords, shopCoords)
 	end)
 
 	WaitForVehicleToLoad(elements[1].model)
-	ESX.Game.SpawnLocalVehicle(elements[1].model, shopCoords, 0.0, function(vehicle)
+	ESX.Game.SpawnLocalVehicle(elements[1].model, shopCoords, 160.0, function(vehicle)
 		table.insert(spawnedVehicles, vehicle)
 		TaskWarpPedIntoVehicle(playerPed, vehicle, -1)
 		FreezeEntityPosition(vehicle, true)
@@ -621,9 +619,9 @@ function OpenFBIActionsMenu()
 				menu2.close()
 			end)
 		elseif data.current.value == 'vehicle_interaction' then
-			local elements  = {}
+			local elements = {}
 			local playerPed = PlayerPedId()
-			local vehicle   = ESX.Game.GetVehicleInDirection()
+			local vehicle = ESX.Game.GetVehicleInDirection()
 			
 			if DoesEntityExist(vehicle) then
 				table.insert(elements, {label = _U('vehicle_info'),	value = 'vehicle_infos'})
@@ -660,7 +658,7 @@ function OpenFBIActionsMenu()
 						end
 					elseif action == 'impound' then
 						-- is the script busy?
-						if CurrentTask.Busy then
+						if currentTask.busy then
 							return
 						end
 
@@ -668,8 +666,8 @@ function OpenFBIActionsMenu()
 						
 						TaskStartScenarioInPlace(playerPed, 'CODE_HUMAN_MEDIC_TEND_TO_DEAD', 0, true)
 						
-						CurrentTask.Busy = true
-						CurrentTask.Task = ESX.SetTimeout(10000, function()
+						currentTask.busy = true
+						currentTask.task = ESX.SetTimeout(10000, function()
 							ClearPedTasks(playerPed)
 							ImpoundVehicle(vehicle)
 							Citizen.Wait(100) -- sleep the entire script to let stuff sink back to reality
@@ -677,15 +675,15 @@ function OpenFBIActionsMenu()
 						
 						-- keep track of that vehicle!
 						Citizen.CreateThread(function()
-							while CurrentTask.Busy do
+							while currentTask.busy do
 								Citizen.Wait(1000)
 							
 								vehicle = GetClosestVehicle(coords.x, coords.y, coords.z, 3.0, 0, 71)
-								if not DoesEntityExist(vehicle) and CurrentTask.Busy then
+								if not DoesEntityExist(vehicle) and currentTask.busy then
 									ESX.ShowNotification(_U('impound_canceled_moved'))
-									ESX.ClearTimeout(CurrentTask.Task)
+									ESX.ClearTimeout(currentTask.task)
 									ClearPedTasks(playerPed)
-									CurrentTask.Busy = false
+									currentTask.busy = false
 									break
 								end
 							end
@@ -697,9 +695,7 @@ function OpenFBIActionsMenu()
 
 			end, function(data2, menu2)
 				menu2.close()
-			end
-			)
-
+			end)
 		elseif data.current.value == 'object_spawner' then
 			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'citizen_interaction', {
 				title    = _U('traffic_interaction'),
@@ -712,9 +708,9 @@ function OpenFBIActionsMenu()
 				}
 			}, function(data2, menu2)
 				local playerPed = PlayerPedId()
-				local coords    = GetEntityCoords(playerPed)
-				local forward   = GetEntityForwardVector(playerPed)
-				local x, y, z   = table.unpack(coords + forward * 1.0)
+				local coords = GetEntityCoords(playerPed)
+				local forward = GetEntityForwardVector(playerPed)
+				local x, y, z = table.unpack(coords + forward * 1.0)
 
 				if data2.current.model == 'prop_roadcone02a' then
 					z = z - 2.0
@@ -736,8 +732,8 @@ end
 
 function OpenIdentityCardMenu(player)
 	ESX.TriggerServerCallback('esx_fbi_job:getOtherPlayerData', function(data)
-		local elements    = {}
-		local nameLabel   = _U('name', data.name)
+		local elements = {}
+		local nameLabel = _U('name', data.name)
 		local jobLabel, sexLabel, dobLabel, heightLabel, idLabel
 
 		if data.job.grade_label and  data.job.grade_label ~= '' then
@@ -858,7 +854,7 @@ function OpenBodySearchMenu(player)
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'body_search', {
 			title    = _U('search'),
 			align    = 'top-left',
-			elements = elements,
+			elements = elements
 		}, function(data, menu)
 			if data.current.value then
 				TriggerServerEvent('esx_fbi_job:confiscatePlayerItem', GetPlayerServerId(player), data.current.itemType, data.current.value, data.current.amount)
@@ -1298,8 +1294,7 @@ function OpenPutStocksMenu()
 	end)
 end
 
-function OpenElevator(station, partNum)
-
+function OpenElevator()
 	local elements = {
 		{ label = _U('elevator_top'), value = 'elevator_top' },
 		{ label = _U('elevator_down'), value = 'elevator_down' },
@@ -1311,20 +1306,19 @@ function OpenElevator(station, partNum)
 		align    = 'top-left',
 		elements = elements
 	}, function(data, menu)
-
 		if data.current.value == 'elevator_top' then
-			TeleportFadeEffect(PlayerPedId(), Config.FBIStations[station].Elevator[partNum].Top)
+			TeleportFadeEffect(PlayerPedId(), vector3(136.0, -761.8, 241.1))
 		end
 
 		if data.current.value == 'elevator_down' then
-			TeleportFadeEffect(PlayerPedId(), Config.FBIStations[station].Elevator[partNum].Down)
+			TeleportFadeEffect(PlayerPedId(), vector3(136.0, -761.5, 44.7))
 		end
 
 		if data.current.value == 'elevator_parking' then
-			TeleportFadeEffect(PlayerPedId(), Config.FBIStations[station].Elevator[partNum].Parking)
+			TeleportFadeEffect(PlayerPedId(), vector3(65.4, -749.6, 30.6))
 		end
-		menu.close()
 
+		menu.close()
 	end, function(data, menu)
 		menu.close()
 		
@@ -1374,7 +1368,7 @@ AddEventHandler('esx_fbi_job:hasEnteredMarker', function(station, part, partNum)
 		CurrentActionData = {station = station}
 	elseif part == 'Vehicles' then
 		CurrentAction     = 'menu_vehicle_spawner'
-		CurrentActionMsg  = _U('vehicle_spawner')
+		CurrentActionMsg  = _U('garage_prompt')
 		CurrentActionData = {station = station, part = part, partNum = partNum}
 	elseif part == 'BossActions' then
 		CurrentAction     = 'menu_boss_actions'
@@ -1383,7 +1377,7 @@ AddEventHandler('esx_fbi_job:hasEnteredMarker', function(station, part, partNum)
 	elseif part == 'Elevator' then
 		CurrentAction     = 'menu_elevator'
 		CurrentActionMsg  = _U('open_elevator')
-		CurrentActionData = {station = station, partNum = partNum}
+		CurrentActionData = {}
 	end
 end)
 
@@ -1426,11 +1420,11 @@ end)
 
 RegisterNetEvent('esx_fbi_job:handcuff')
 AddEventHandler('esx_fbi_job:handcuff', function()
-	IsHandcuffed    = not IsHandcuffed
+	isHandcuffed = not isHandcuffed
 	local playerPed = PlayerPedId()
 
 	Citizen.CreateThread(function()
-		if IsHandcuffed then
+		if isHandcuffed then
 
 			RequestAnimDict('mp_arresting')
 			while not HasAnimDictLoaded('mp_arresting') do
@@ -1447,15 +1441,15 @@ AddEventHandler('esx_fbi_job:handcuff', function()
 			DisplayRadar(false)
 
 			if Config.EnableHandcuffTimer then
-				if HandcuffTimer.Active then
-					ESX.ClearTimeout(HandcuffTimer.Task)
+				if handcuffTimer.active then
+					ESX.ClearTimeout(handcuffTimer.task)
 				end
 
 				StartHandcuffTimer()
 			end
 		else
-			if Config.EnableHandcuffTimer and HandcuffTimer.Active then
-				ESX.ClearTimeout(HandcuffTimer.Task)
+			if Config.EnableHandcuffTimer and handcuffTimer.active then
+				ESX.ClearTimeout(handcuffTimer.task)
 			end
 
 			ClearPedSecondaryTask(playerPed)
@@ -1470,9 +1464,9 @@ end)
 
 RegisterNetEvent('esx_fbi_job:unrestrain')
 AddEventHandler('esx_fbi_job:unrestrain', function()
-	if IsHandcuffed then
+	if isHandcuffed then
 		local playerPed = PlayerPedId()
-		IsHandcuffed = false
+		isHandcuffed = false
 
 		ClearPedSecondaryTask(playerPed)
 		SetEnableHandcuffs(playerPed, false)
@@ -1482,20 +1476,20 @@ AddEventHandler('esx_fbi_job:unrestrain', function()
 		DisplayRadar(true)
 
 		-- end timer
-		if Config.EnableHandcuffTimer and HandcuffTimer.Active then
-			ESX.ClearTimeout(HandcuffTimer.Task)
+		if Config.EnableHandcuffTimer and handcuffTimer.active then
+			ESX.ClearTimeout(handcuffTimer.task)
 		end
 	end
 end)
 
 RegisterNetEvent('esx_fbi_job:drag')
-AddEventHandler('esx_fbi_job:drag', function(copID)
-	if not IsHandcuffed then
+AddEventHandler('esx_fbi_job:drag', function(copId)
+	if not isHandcuffed then
 		return
 	end
 
-	DragStatus.IsDragged = not DragStatus.IsDragged
-	DragStatus.CopId     = tonumber(copID)
+	dragStatus.isDragged = not dragStatus.isDragged
+	dragStatus.CopId = copId
 end)
 
 Citizen.CreateThread(function()
@@ -1505,17 +1499,17 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(1)
 
-		if IsHandcuffed then
+		if isHandcuffed then
 			playerPed = PlayerPedId()
 
-			if DragStatus.IsDragged then
-				targetPed = GetPlayerPed(GetPlayerFromServerId(DragStatus.CopId))
+			if dragStatus.isDragged then
+				targetPed = GetPlayerPed(GetPlayerFromServerId(dragStatus.CopId))
 
 				-- undrag if target is in an vehicle
 				if not IsPedSittingInAnyVehicle(targetPed) then
 					AttachEntityToEntity(playerPed, targetPed, 11816, 0.54, 0.54, 0.0, 0.0, 0.0, 0.0, false, false, false, false, 2, true)
 				else
-					DragStatus.IsDragged = false
+					dragStatus.isDragged = false
 					DetachEntity(playerPed, true, false)
 				end
 
@@ -1535,9 +1529,9 @@ end)
 RegisterNetEvent('esx_fbi_job:putInVehicle')
 AddEventHandler('esx_fbi_job:putInVehicle', function()
 	local playerPed = PlayerPedId()
-	local coords    = GetEntityCoords(playerPed)
+	local coords = GetEntityCoords(playerPed)
 
-	if not IsHandcuffed then
+	if not isHandcuffed then
 		return
 	end
 
@@ -1556,7 +1550,7 @@ AddEventHandler('esx_fbi_job:putInVehicle', function()
 
 			if freeSeat then
 				TaskWarpPedIntoVehicle(playerPed, vehicle, freeSeat)
-				DragStatus.IsDragged = false
+				dragStatus.isDragged = false
 			end
 		end
 	end
@@ -1646,7 +1640,7 @@ Citizen.CreateThread(function()
 		SetBlipColour (blip, v.Blip.Colour)
 		SetBlipAsShortRange(blip, true)
 
-		BeginTextCommandSetBlipName("STRING")
+		BeginTextCommandSetBlipName('STRING')
 		AddTextComponentString(_U('map_blip'))
 		EndTextCommandSetBlipName(blip)
 	end
@@ -1720,22 +1714,13 @@ Citizen.CreateThread(function()
 				end
 
 				for i=1, #v.Elevator, 1 do
-					local distanceTop = GetDistanceBetweenCoords(coords, v.Elevator[i].Top, true)
-					local distanceDown = GetDistanceBetweenCoords(coords, v.Elevator[i].Down, true)
-					local distanceParking = GetDistanceBetweenCoords(coords, v.Elevator[i].Parking, true)
+					local distance = GetDistanceBetweenCoords(coords, v.Elevator[i], true)
 
-					if distanceTop < Config.DrawDistance then
-						DrawMarker(Config.MarkerType, v.Elevator[i].Top, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
-						letSleep = false
-					elseif distanceDown < Config.DrawDistance then
-						DrawMarker(Config.MarkerType, v.Elevator[i].Down, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
-						letSleep = false
-					elseif distanceParking < Config.DrawDistance
-						DrawMarker(Config.MarkerType, v.Elevator[i].Parking, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
-						letSleep = false
+					if distance < Config.DrawDistance then
+						DrawMarker(Config.MarkerType, v.Elevator[i], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
 					end
 
-					if (distanceTop or distanceDown or distanceParking) < Config.MarkerSize.x then
+					if distance < Config.MarkerSize.x then
 						isInMarker, currentStation, currentPart, currentPartNum = true, k, 'Elevator', i
 					end
 				end
@@ -1824,7 +1809,7 @@ end)
 Citizen.CreateThread(function()
 	while true do
 
-		Citizen.Wait(10)
+		Citizen.Wait(0)
 
 		if CurrentAction then
 			ESX.ShowHelpNotification(CurrentActionMsg)
@@ -1862,7 +1847,7 @@ Citizen.CreateThread(function()
 				elseif CurrentAction == 'remove_entity' then
 					DeleteEntity(CurrentActionData.entity)
 				elseif CurrentAction == 'menu_elevator' then
-					OpenElevator(CurrentActionData.station, CurrentActionData.partNum)
+					OpenElevator()
 				end
 				
 				CurrentAction = nil
@@ -1879,12 +1864,12 @@ Citizen.CreateThread(function()
 			end
 		end
 		
-		if IsControlJustReleased(0, 38) and CurrentTask.Busy then
+		if IsControlJustReleased(0, 38) and currentTask.busy then
 			ESX.ShowNotification(_U('impound_canceled'))
-			ESX.ClearTimeout(CurrentTask.Task)
+			ESX.ClearTimeout(currentTask.task)
 			ClearPedTasks(PlayerPedId())
 			
-			CurrentTask.Busy = false
+			currentTask.busy = false
 		end
 	end
 end)
@@ -1966,33 +1951,30 @@ AddEventHandler('onResourceStop', function(resource)
 			TriggerServerEvent('esx_service:disableService', 'fbi')
 		end
 
-		if Config.EnableHandcuffTimer and HandcuffTimer.Active then
-			ESX.ClearTimeout(HandcuffTimer.Task)
+		if Config.EnableHandcuffTimer and handcuffTimer.active then
+			ESX.ClearTimeout(handcuffTimer.task)
 		end
 	end
 end)
 
 -- handcuff timer, unrestrain the player after an certain amount of time
 function StartHandcuffTimer()
-	if Config.EnableHandcuffTimer and HandcuffTimer.Active then
-		ESX.ClearTimeout(HandcuffTimer.Task)
+	if Config.EnableHandcuffTimer and handcuffTimer.active then
+		ESX.ClearTimeout(handcuffTimer.task)
 	end
 
-	HandcuffTimer.Active = true
+	handcuffTimer.active = true
 
-	HandcuffTimer.Task = ESX.SetTimeout(Config.HandcuffTimer, function()
+	handcuffTimer.task = ESX.SetTimeout(Config.HandcuffTimer, function()
 		ESX.ShowNotification(_U('unrestrained_timer'))
 		TriggerEvent('esx_fbi_job:unrestrain')
-		HandcuffTimer.Active = false
+		handcuffTimer.active = false
 	end)
 end
 
--- TODO
---   - return to garage if owned
---   - message owner that his vehicle has been impounded
 function ImpoundVehicle(vehicle)
 	--local vehicleName = GetLabelText(GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
-	ESX.Game.DeleteVehicle(vehicle) 
+	ESX.Game.DeleteVehicle(vehicle)
 	ESX.ShowNotification(_U('impound_successful'))
-	CurrentTask.Busy = false
+	currentTask.busy = false
 end
