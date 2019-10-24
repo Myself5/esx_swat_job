@@ -1,48 +1,76 @@
 Locales['en'] = {
-  -- Cloakroom
-  ['cloakroom'] = 'cloakroom',
-  ['citizen_wear'] = 'Civil outfit',
-  ['fbi_wear'] = 'FBI outfit',
-  ['bullet_wear'] = 'bullet proof vest',
-  ['no_outfit'] = 'there\'s is no uniform at your size...',
+-- Cloakroom
+  ['cloakroom'] = 'locker room',
+  ['citizen_wear'] = 'civilian Outfit',
+  ['fbi_wear'] = 'fbi Outfit',
+  ['bullet_wear'] = 'bulletproof vest',
+  ['no_outfit'] = 'there\'s no uniform that fits you!',
   ['open_cloackroom'] = 'press ~INPUT_CONTEXT~ to change ~y~clothes~s~.',
-  
-  -- Elevator
+-- Elevator
   ['elevator'] = 'elevator',
   ['elevator_top'] = 'go to the offices',
   ['elevator_down'] = 'go to the ground floor',
   ['elevator_parking'] = 'go to the car park',
-  ['open_elevator'] = 'press ~INPUT_CONTEXT~ to take the elevator',
-
-  -- Armory
+  ['open_elevator'] = 'press ~INPUT_CONTEXT~ to use the elevator',
+-- Armory
   ['remove_object'] = 'withdraw object',
   ['deposit_object'] = 'deposit object',
-  ['get_weapon'] = 'withdraw weapon',
-  ['put_weapon'] = 'deposit weapon',
+  ['get_weapon'] = 'withdraw weapon from armory',
+  ['put_weapon'] = 'store weapon in armory',
   ['buy_weapons'] = 'buy weapons',
   ['armory'] = 'armory',
-  ['open_armory'] = 'press ~INPUT_CONTEXT~ to access the armory',
-
-  -- Vehicles
+  ['open_armory'] = 'press ~INPUT_CONTEXT~ to access the ~y~Armory~s~.',
+  ['armory_owned'] = 'owned',
+  ['armory_free'] = 'free',
+  ['armory_item'] = '$%s',
+  ['armory_weapontitle'] = 'armory - Buy weapon',
+  ['armory_componenttitle'] = 'armory - Weapon attatchments',
+  ['armory_bought'] = 'you bought an ~y~%s~s~ for ~r~$%s~s~',
+  ['armory_money'] = 'you cannot afford that weapon',
+  ['armory_hascomponent'] = 'you have that attatchment equiped!',
+  ['get_weapon_menu'] = 'armory - Withdraw Weapon',
+  ['put_weapon_menu'] = 'armory - Store Weapon',
+-- Vehicles
   ['vehicle_menu'] = 'vehicle',
-  ['vehicle_blocked'] = 'there is already a vehicle out',
-  ['vehicle_spawner'] = 'press ~INPUT_CONTEXT~ to take out a vehicle',
-  ['store_vehicle'] = 'press ~INPUT_CONTEXT~ to store the vehicle',
-  
-  -- Service
+  ['vehicle_blocked'] = 'all available spawn points are currently blocked!',
+  ['garage_prompt'] = 'press ~INPUT_CONTEXT~ to access the ~y~Vehicle Actions~s~.',
+  ['garage_title'] = 'vehicle Actions',
+  ['garage_stored'] = 'stored',
+  ['garage_notstored'] = 'not in garage',
+  ['garage_storing'] = 'we\'re attempting to remove the vehicle, make sure no players are around it.',
+  ['garage_has_stored'] = 'the vehicle has been stored in your garage',
+  ['garage_has_notstored'] = 'no nearby owned vehicles were found',
+  ['garage_notavailable'] = 'your vehicle is not stored in the garage.',
+  ['garage_blocked'] = 'there\'s no available spawn points!',
+  ['garage_empty'] = 'you dont have any vehicles in your garage.',
+  ['garage_released'] = 'your vehicle has been released from the garage.',
+  ['garage_store_nearby'] = 'there is no nearby vehicles.',
+  ['garage_storeditem'] = 'open garage',
+  ['garage_storeitem'] = 'store vehicle in garage',
+  ['garage_buyitem'] = 'vehicle shop',
+  ['helicopter_prompt'] = 'press ~INPUT_CONTEXT~ to access the ~y~Helicopter Actions~s~.',
+  ['helicopter_notauthorized'] = 'you\'re not authorized to buy helicopters.',
+  ['shop_item'] = '$%s',
+  ['vehicleshop_title'] = 'vehicle Shop',
+  ['vehicleshop_confirm'] = 'do you want to buy this vehicle?',
+  ['vehicleshop_bought'] = 'you have bought ~y~%s~s~ for ~r~$%s~s~',
+  ['vehicleshop_money'] = 'you cannot afford that vehicle',
+  ['vehicleshop_awaiting_model'] = 'the vehicle is currently ~g~DOWNLOADING & LOADING~s~ please wait',
+  ['confirm_no'] = 'no',
+  ['confirm_yes'] = 'yes',
+-- Service
   ['service_max'] = 'you cannot enter service, max officers in service: %s/%s',
   ['service_not'] = 'you have not entered service! You\'ll have to get changed first.',
   ['service_anonunce'] = 'service information',
   ['service_in'] = 'you\'ve entered service, welcome!',
-  ['service_in_announce'] = 'agent ~y~%s~s~ has entered service!',
+  ['service_in_announce'] = 'operator ~y~%s~s~ has entered service!',
   ['service_out'] = 'you have left service.',
-  ['service_out_announce'] = 'agent ~y~%s~s~ has left their service.',
-
-  -- Action Menu
-  ['fbi_actions'] = 'FBI',
+  ['service_out_announce'] = 'operator ~y~%s~s~ has left their service.',
+-- Action Menu
   ['citizen_interaction'] = 'citizen Interaction',
   ['vehicle_interaction'] = 'vehicle Interaction',
   ['object_spawner'] = 'object Spawner',
+
   ['id_card'] = 'ID Card',
   ['search'] = 'search',
   ['handcuff'] = 'cuff / Uncuff',
@@ -57,8 +85,7 @@ Locales['en'] = {
   ['licence_you_revoked'] = 'you revoked a ~b~%s~s~ which belonged to ~y~%s~s~',
   ['no_players_nearby'] = 'there is no player(s) nearby!',
   ['being_searched'] = 'you are being ~y~searched~s~ by the ~b~FBI~s~',
-
-  -- Vehicle interaction
+-- Vehicle interaction
   ['vehicle_info'] = 'vehicle Info',
   ['pick_lock'] = 'lockpick Vehicle',
   ['vehicle_unlocked'] = 'vehicle ~g~Unlocked~s~',
@@ -73,15 +100,14 @@ Locales['en'] = {
   ['search_database_error_invalid'] = 'that is ~r~not~s~ a ~y~valid~s~ registration number',
   ['search_database_error_not_found'] = 'that ~y~registration number~s~ is ~r~not~s~ registered to an vehicle!',
   ['search_database_found'] = 'the vehicle is ~y~registered~s~ to ~b~%s~s~',
-
-  -- Traffic interaction
+-- Traffic interaction
   ['traffic_interaction'] = 'interaction Traffic',
   ['cone'] = 'cone',
   ['barrier'] = 'barrier',
   ['spikestrips'] = 'spikestrips',
   ['box'] = 'box',
-
-  -- ID Card Menu
+  ['cash'] = 'box of cash',
+-- ID Card Menu
   ['name'] = 'name: %s',
   ['job'] = 'job: %s',
   ['sex'] = 'sex: %s',
@@ -92,8 +118,7 @@ Locales['en'] = {
   ['unknown'] = 'unknown',
   ['male'] = 'male',
   ['female'] = 'female',
-
-  -- Body Search Menu
+-- Body Search Menu
   ['guns_label'] = '--- Guns ---',
   ['inventory_label'] = '--- Inventory ---',
   ['license_label'] = ' --- Licenses ---',
@@ -112,24 +137,11 @@ Locales['en'] = {
   ['average_offense'] = 'average Offense',
   ['major_offense'] = 'major Offense',
   ['fine_total'] = 'fine: %s',
-
-  -- Vehicle Info Menu
-  ['plate'] = 'n°: %s',
+-- Vehicle Info Menu
+  ['plate'] = 'plate: %s',
   ['owner_unknown'] = 'owner: Unknown',
   ['owner'] = 'owner: %s',
-
-  -- Weapons Menus
-  ['get_weapon_menu'] = 'armory - Withdraw Weapon',
-  ['put_weapon_menu'] = 'armory - Deposit Weapon',
-  ['buy_weapon_menu'] = 'armory - Buy Guns',
-  ['not_enough_money'] = 'you do not have enough money',
-
-  -- Boss Menu
-  ['take_company_money'] = 'withdraw Company Money',
-  ['deposit_money'] = 'deposit Money',
-  ['amount_of_withdrawal'] = 'amount of Withdrawal',
-  ['invalid_amount'] = 'amount invalid',
-  ['amount_of_deposit'] = 'amount of deposit',
+-- Boss Menu
   ['open_bossmenu'] = 'press ~INPUT_CONTEXT~ to open the menu',
   ['quantity_invalid'] = 'invalid quantity',
   ['have_withdrawn'] = 'you have withdrawn ~y~%sx~s~ ~b~%s~s~',
@@ -137,13 +149,11 @@ Locales['en'] = {
   ['quantity'] = 'quantity',
   ['inventory'] = 'inventory',
   ['fbi_stock'] = 'fbi Stock',
-
-  -- Misc
+-- Misc
   ['remove_prop'] = 'press ~INPUT_CONTEXT~ to delete the object',
   ['map_blip'] = 'FBI',
   ['unrestrained_timer'] = 'you feel your handcuffs slowly losing grip and fading away.',
-
-  -- Notifications
+-- Notifications
   ['alert_fbi'] = 'fbi alert',
   ['phone_fbi'] = 'fbi',
 }
