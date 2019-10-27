@@ -24,5 +24,10 @@ client_scripts {
 
 dependencies {
 	'es_extended',
-	'esx_billing'
+	'esx_billing',
+	'esx_society',
+	'esx_datastore',
+	'esx_identity',
+	'esx_license',
+	'esx_service'
 }
