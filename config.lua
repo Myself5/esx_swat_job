@@ -5,15 +5,15 @@ Config.MarkerType                 = 1
 Config.MarkerSize                 = { x = 1.5, y = 1.5, z = 1.0 }
 Config.MarkerColor                = { r = 255, g = 255, b = 255 }
 
-Config.EnablePlayerManagement     = true
-Config.EnableArmoryManagement     = true
-Config.EnableESXIdentity          = true -- enable if you're using esx_identity
-Config.EnableLicenses             = true -- enable if you're using esx_license
+Config.EnablePlayerManagement     = false
+Config.EnableArmoryManagement     = false
+Config.EnableESXIdentity          = false -- enable if you're using esx_identity
+Config.EnableLicenses             = false -- enable if you're using esx_license
 
 Config.EnableHandcuffTimer        = true -- enable handcuff timer ? will unrestrain player after the time ends
 Config.HandcuffTimer              = 10 * 60000 -- 10 mins
 
-Config.EnableJobBlip              = true -- enable blips for colleagues, requires esx_society
+Config.EnableJobBlip              = false -- enable blips for colleagues, requires esx_society
 Config.EnablePoliceFine           = true -- enable fine, requires esx_policejob
 
 Config.MaxInService               = -1
