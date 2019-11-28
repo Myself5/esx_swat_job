@@ -114,7 +114,7 @@ function OpenCloakroomMenu()
 
 						TriggerServerEvent('esx_service:notifyAllInService', notification, 'fbi')
 
-						TriggerServerEvent('esx_service:disableService', 'fi')
+						TriggerServerEvent('esx_service:disableService', 'fbi')
 						TriggerEvent('esx_fbi_job:updateBlip')
 						ESX.ShowNotification(_U('service_out'))
 					end
@@ -188,7 +188,7 @@ function OpenArmoryMenu(station)
 	local elements = {
 		{label = _U('buy_weapons'), value = 'buy_weapons'}
 	}
-	
+
 	if Config.EnableArmoryManagement then
 		table.insert(elements, {label = _U('get_weapon'), value = 'get_weapon'})
 		table.insert(elements, {label = _U('put_weapon'), value = 'put_weapon'})
@@ -582,7 +582,7 @@ function OpenFBIActionsMenu()
 					value = 'license'
 				})
 			end
-		
+
 			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'citizen_interaction', {
 				title    = _U('citizen_interaction'),
 				align    = 'top-left',
@@ -622,11 +622,11 @@ function OpenFBIActionsMenu()
 			local elements = {}
 			local playerPed = PlayerPedId()
 			local vehicle = ESX.Game.GetVehicleInDirection()
-			
+
 			if DoesEntityExist(vehicle) then
 				table.insert(elements, {label = _U('vehicle_info'),	value = 'vehicle_infos'})
-				table.insert(elements, {label = _U('pick_lock'),	value = 'hijack_vehicle'})
-				table.insert(elements, {label = _U('impound'),		value = 'impound'})
+				table.insert(elements, {label = _U('pick_lock'), value = 'hijack_vehicle'})
+				table.insert(elements, {label = _U('impound'), value = 'impound'})
 			end
 			
 			table.insert(elements, {label = _U('search_database'), value = 'search_database'})
@@ -643,12 +643,12 @@ function OpenFBIActionsMenu()
 				if action == 'search_database' then
 					LookupVehicle()
 				elseif DoesEntityExist(vehicle) then
-					local vehicleData = ESX.Game.GetVehicleProperties(vehicle)
 					if action == 'vehicle_infos' then
+						local vehicleData = ESX.Game.GetVehicleProperties(vehicle)
 						OpenVehicleInfosMenu(vehicleData)
 					elseif action == 'hijack_vehicle' then
 						if IsAnyVehicleNearPoint(coords.x, coords.y, coords.z, 3.0) then
-							TaskStartScenarioInPlace(playerPed, "WORLD_HUMAN_WELDING", 0, true)
+							TaskStartScenarioInPlace(playerPed, 'WORLD_HUMAN_WELDING', 0, true)
 							Citizen.Wait(20000)
 							ClearPedTasksImmediately(playerPed)
 
@@ -665,19 +665,19 @@ function OpenFBIActionsMenu()
 						ESX.ShowHelpNotification(_U('impound_prompt'))
 						
 						TaskStartScenarioInPlace(playerPed, 'CODE_HUMAN_MEDIC_TEND_TO_DEAD', 0, true)
-						
+
 						currentTask.busy = true
 						currentTask.task = ESX.SetTimeout(10000, function()
 							ClearPedTasks(playerPed)
 							ImpoundVehicle(vehicle)
 							Citizen.Wait(100) -- sleep the entire script to let stuff sink back to reality
 						end)
-						
+
 						-- keep track of that vehicle!
 						Citizen.CreateThread(function()
 							while currentTask.busy do
 								Citizen.Wait(1000)
-							
+
 								vehicle = GetClosestVehicle(coords.x, coords.y, coords.z, 3.0, 0, 71)
 								if not DoesEntityExist(vehicle) and currentTask.busy then
 									ESX.ShowNotification(_U('impound_canceled_moved'))
@@ -698,13 +698,13 @@ function OpenFBIActionsMenu()
 			end)
 		elseif data.current.value == 'object_spawner' then
 			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'citizen_interaction', {
-				title    = _U('traffic_interaction'),
-				align    = 'top-left',
+				title = _U('traffic_interaction'),
+				align = 'top-left',
 				elements = {
-					{label = _U('cone'),		value = 'prop_roadcone02a'},
-					{label = _U('barrier'),		value = 'prop_barrier_work05'},
+					{label = _U('cone'), value = 'prop_roadcone02a'},
+					{label = _U('barrier'), value = 'prop_barrier_work05'},
 					{label = _U('spikestrips'),	value = 'p_ld_stinger_s'},
-					{label = _U('box'),			value = 'prop_boxpile_07d'}
+					{label = _U('box'), value = 'prop_boxpile_07d'}
 				}
 			}, function(data2, menu2)
 				local playerPed = PlayerPedId()
@@ -724,7 +724,6 @@ function OpenFBIActionsMenu()
 				menu2.close()
 			end)
 		end
-
 	end, function(data, menu)
 		menu.close()
 	end)
@@ -741,10 +740,10 @@ function OpenIdentityCardMenu(player)
 		else
 			jobLabel = _U('job', data.job.label)
 		end
-	
+
 		if Config.EnableESXIdentity then
 			nameLabel = _U('name', data.firstname .. ' ' .. data.lastname)
-	
+
 			if data.sex then
 				if string.lower(data.sex) == 'm' then
 					sexLabel = _U('sex', _U('male'))
@@ -754,52 +753,52 @@ function OpenIdentityCardMenu(player)
 			else
 				sexLabel = _U('sex', _U('unknown'))
 			end
-	
+
 			if data.dob then
 				dobLabel = _U('dob', data.dob)
 			else
 				dobLabel = _U('dob', _U('unknown'))
 			end
-	
+
 			if data.height then
 				heightLabel = _U('height', data.height)
 			else
 				heightLabel = _U('height', _U('unknown'))
 			end
-	
+
 			if data.name then
 				idLabel = _U('id', data.name)
 			else
 				idLabel = _U('id', _U('unknown'))
 			end
 		end
-	
+
 		local elements = {
 			{label = nameLabel},
 			{label = jobLabel}
 		}
-	
+
 		if Config.EnableESXIdentity then
 			table.insert(elements, {label = sexLabel})
 			table.insert(elements, {label = dobLabel})
 			table.insert(elements, {label = heightLabel})
 			table.insert(elements, {label = idLabel})
 		end
-	
+
 		if data.drunk then
 			table.insert(elements, {label = _U('bac', data.drunk)})
 		end
-	
+
 		if data.licenses then
-	
+
 			table.insert(elements, {label = _U('license_label')})
-	
+
 			for i=1, #data.licenses, 1 do
 				table.insert(elements, {label = data.licenses[i].label})
 			end
-	
+
 		end
-	
+
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'citizen_interaction', {
 			title    = _U('citizen_interaction'),
 			align    = 'top-left',
@@ -817,10 +816,10 @@ function OpenBodySearchMenu(player)
 		for i=1, #data.accounts, 1 do
 			if data.accounts[i].name == 'black_money' and data.accounts[i].money > 0 then
 				table.insert(elements, {
-					label    = _U('confiscate_dirty', ESX.Math.Round(data.accounts[i].money)),
-					value    = 'black_money',
+					label = _U('confiscate_dirty', ESX.Math.Round(data.accounts[i].money)),
+					value = 'black_money',
 					itemType = 'item_account',
-					amount   = data.accounts[i].money
+					amount = data.accounts[i].money
 				})
 
 				break
@@ -831,10 +830,10 @@ function OpenBodySearchMenu(player)
 
 		for i=1, #data.weapons, 1 do
 			table.insert(elements, {
-				label    = _U('confiscate_weapon', ESX.GetWeaponLabel(data.weapons[i].name), data.weapons[i].ammo),
-				value    = data.weapons[i].name,
+				label = _U('confiscate_weapon', ESX.GetWeaponLabel(data.weapons[i].name), data.weapons[i].ammo),
+				value = data.weapons[i].name,
 				itemType = 'item_weapon',
-				amount   = data.weapons[i].ammo
+				amount = data.weapons[i].ammo
 			})
 		end
 
@@ -843,17 +842,17 @@ function OpenBodySearchMenu(player)
 		for i=1, #data.inventory, 1 do
 			if data.inventory[i].count > 0 then
 				table.insert(elements, {
-				label    = _U('confiscate_inv', data.inventory[i].count, data.inventory[i].label),
-				value    = data.inventory[i].name,
+				label = _U('confiscate_inv', data.inventory[i].count, data.inventory[i].label),
+				value = data.inventory[i].name,
 				itemType = 'item_standard',
-				amount   = data.inventory[i].count
+				amount = data.inventory[i].count
 				})
 			end
 		end
 
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'body_search', {
-			title    = _U('search'),
-			align    = 'top-left',
+			title = _U('search'),
+			align = 'top-left',
 			elements = elements
 		}, function(data, menu)
 			if data.current.value then
@@ -869,8 +868,8 @@ end
 function OpenFineMenu(player)
 	if Config.EnablePoliceFine then
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'fine', {
-			title    = _U('fine'),
-			align    = 'top-left',
+			title = _U('fine'),
+			align = 'top-left',
 			elements = {
 				{label = _U('traffic_offense'), value = 0},
 				{label = _U('minor_offense'),   value = 1},
@@ -892,17 +891,17 @@ function OpenFineCategoryMenu(player, category)
 
 			for k,fine in ipairs(fines) do
 				table.insert(elements, {
-					label     = ('%s <span style="color:green;">%s</span>'):format(fine.label, _U('armory_item', ESX.Math.GroupDigits(fine.amount))),
-					value     = fine.id,
-					amount    = fine.amount,
+					label = ('%s <span style="color:green;">%s</span>'):format(fine.label, _U('armory_item', ESX.Math.GroupDigits(fine.amount))),
+					value = fine.id,
+					amount = fine.amount,
 					fineLabel = fine.label
 				})
 			end
 
 			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'fine_category', {
-				title    = _U('fine'),
-				align    = 'top-left',
-				elements = elements,
+				title = _U('fine'),
+				align = 'top-left',
+				elements = elements
 			}, function(data, menu)
 				menu.close()
 
@@ -960,28 +959,27 @@ function ShowPlayerLicense(player)
 				end
 			end
 		end
-		
+
 		if Config.EnableESXIdentity then
 			targetName = data.firstname .. ' ' .. data.lastname
 		else
 			targetName = data.name
 		end
-		
+
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'manage_license', {
-			title    = _U('license_revoke'),
-			align    = 'top-left',
+			title = _U('license_revoke'),
+			align = 'top-left',
 			elements = elements,
 		}, function(data, menu)
 			ESX.ShowNotification(_U('licence_you_revoked', data.current.label, targetName))
 			TriggerServerEvent('esx_fbi_job:message', GetPlayerServerId(player), _U('license_revoked', data.current.label))
-			
+
 			TriggerServerEvent('esx_license:removeLicense', GetPlayerServerId(player), data.current.type)
-			
+
 			ESX.SetTimeout(300, function()
 				ShowPlayerLicense(player)
 			end)
-		end,
-		function(data, menu)
+		end, function(data, menu)
 			menu.close()
 		end)
 	end, GetPlayerServerId(player))
@@ -999,8 +997,8 @@ function OpenUnpaidBillsMenu(player)
 		end
 
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'billing', {
-			title    = _U('unpaid_bills'),
-			align    = 'top-left',
+			title = _U('unpaid_bills'),
+			align = 'top-left',
 			elements = elements
 		}, nil, function(data, menu)
 			menu.close()
@@ -1019,8 +1017,8 @@ function OpenVehicleInfosMenu(vehicleData)
 		end
 
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'vehicle_infos', {
-			title    = _U('vehicle_info'),
-			align    = 'top-left',
+			title = _U('vehicle_info'),
+			align = 'top-left',
 			elements = elements
 		}, nil, function(data, menu)
 			menu.close()
@@ -1042,8 +1040,8 @@ function OpenGetWeaponMenu()
 		end
 
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'armory_get_weapon', {
-			title    = _U('get_weapon_menu'),
-			align    = 'top-left',
+			title = _U('get_weapon_menu'),
+			align = 'top-left',
 			elements = elements
 		}, function(data, menu)
 			menu.close()
@@ -1058,8 +1056,8 @@ function OpenGetWeaponMenu()
 end
 
 function OpenPutWeaponMenu()
-	local elements   = {}
-	local playerPed  = PlayerPedId()
+	local elements = {}
+	local playerPed = PlayerPedId()
 	local weaponList = ESX.GetWeaponList()
 
 	for i=1, #weaponList, 1 do
@@ -1074,8 +1072,8 @@ function OpenPutWeaponMenu()
 	end
 
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'armory_put_weapon', {
-		title    = _U('put_weapon_menu'),
-		align    = 'top-left',
+		title = _U('put_weapon_menu'),
+		align = 'top-left',
 		elements = elements
 	}, function(data, menu)
 		menu.close()
@@ -1150,8 +1148,8 @@ function OpenBuyWeaponsMenu()
 	end
 
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'armory_buy_weapons', {
-		title    = _U('armory_weapontitle'),
-		align    = 'top-left',
+		title = _U('armory_weapontitle'),
+		align = 'top-left',
 		elements = elements
 	}, function(data, menu)
 		if data.current.hasWeapon then
@@ -1179,8 +1177,8 @@ end
 
 function OpenWeaponComponentShop(components, weaponName, parentShop)
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'armory_buy_weapons_components', {
-		title    = _U('armory_componenttitle'),
-		align    = 'top-left',
+		title = _U('armory_componenttitle'),
+		align = 'top-left',
 		elements = components
 	}, function(data, menu)
 		if data.current.hasComponent then
@@ -1217,8 +1215,8 @@ function OpenGetStocksMenu()
 		end
 
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'stocks_menu', {
-			title    = _U('fbi_stock'),
-			align    = 'top-left',
+			title = _U('fbi_stock'),
+			align = 'top-left',
 			elements = elements
 		}, function(data, menu)
 			local itemName = data.current.value
@@ -1264,8 +1262,8 @@ function OpenPutStocksMenu()
 		end
 
 		ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'stocks_menu', {
-			title    = _U('inventory'),
-			align    = 'top-left',
+			title = _U('inventory'),
+			align = 'top-left',
 			elements = elements
 		}, function(data, menu)
 			local itemName = data.current.value
@@ -1331,7 +1329,7 @@ end
 RegisterNetEvent('esx:setJob')
 AddEventHandler('esx:setJob', function(job)
 	PlayerData.job = job
-	
+
 	Citizen.Wait(5000)
 	TriggerServerEvent('esx_fbi_job:forceBlip')
 end)
@@ -1350,7 +1348,6 @@ end)
 -- don't show dispatches if the player isn't in service
 AddEventHandler('esx_phone:cancelMessage', function(dispatchNumber)
 	if PlayerData.job and PlayerData.job.name == 'fbi' and PlayerData.job.name == dispatchNumber then
-		-- if esx_service is enabled
 		if Config.MaxInService ~= -1 and not playerInService then
 			CancelEvent()
 		end
@@ -1849,11 +1846,11 @@ Citizen.CreateThread(function()
 				elseif CurrentAction == 'menu_elevator' then
 					OpenElevator()
 				end
-				
+
 				CurrentAction = nil
 			end
 		end -- CurrentAction end
-		
+
 		if IsControlJustReleased(0, 167) and not isDead and PlayerData.job and PlayerData.job.name == 'fbi' and not ESX.UI.Menu.IsOpen('default', GetCurrentResourceName(), 'fbi_actions') then
 			if Config.MaxInService == -1 then
 				OpenFBIActionsMenu()
@@ -1863,7 +1860,7 @@ Citizen.CreateThread(function()
 				ESX.ShowNotification(_U('service_not'))
 			end
 		end
-		
+
 		if IsControlJustReleased(0, 38) and currentTask.busy then
 			ESX.ShowNotification(_U('impound_canceled'))
 			ESX.ClearTimeout(currentTask.task)
@@ -1887,7 +1884,7 @@ function createBlip(id)
 		SetBlipNameToPlayerName(blip, id) -- update blip name
 		SetBlipScale(blip, 0.85) -- set scale
 		SetBlipAsShortRange(blip, true)
-		
+
 		table.insert(blipsCops, blip) -- add blip to array so we can remove it later
 	end
 end
@@ -1899,7 +1896,7 @@ AddEventHandler('esx_fbi_job:updateBlip', function()
 	for k, existingBlip in pairs(blipsCops) do
 		RemoveBlip(existingBlip)
 	end
-	
+
 	-- Clean the blip table
 	blipsCops = {}
 
@@ -1911,7 +1908,7 @@ AddEventHandler('esx_fbi_job:updateBlip', function()
 	if not Config.EnableJobBlip then
 		return
 	end
-	
+
 	-- Is the player a cop? In that case show all the blips for other cops
 	if PlayerData.job and PlayerData.job.name == 'fbi' then
 		ESX.TriggerServerCallback('esx_society:getOnlinePlayers', function(players)
@@ -1925,7 +1922,6 @@ AddEventHandler('esx_fbi_job:updateBlip', function()
 			end
 		end)
 	end
-
 end)
 
 AddEventHandler('playerSpawned', function(spawn)
