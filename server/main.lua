@@ -7,9 +7,9 @@ if Config.MaxInService ~= -1 then
 end
 
 TriggerEvent('esx_phone:registerNumber', 'fbi', _U('alert_fbi'), true, true)
-TriggerEvent('esx_society:registerSociety', 'fbi', 'FBI', 'society_fbi', 'society_fbi', 'society_fbi', {type = 'public'})
+TriggerEvent('esx_society:registerSociety', 'fbi', 'FBI', 'society_fbi', 'society_fbi', 'society_fbi', {type = 'private'})
 
-RegisterServerEvent('esx_fbi_job:confiscatePlayerItem')
+RegisterNetEvent('esx_fbi_job:confiscatePlayerItem')
 AddEventHandler('esx_fbi_job:confiscatePlayerItem', function(target, itemType, itemName, amount)
 	local _source = source
 	local sourceXPlayer = ESX.GetPlayerFromId(_source)
@@ -57,7 +57,7 @@ AddEventHandler('esx_fbi_job:confiscatePlayerItem', function(target, itemType, i
 	end
 end)
 
-RegisterServerEvent('esx_fbi_job:handcuff')
+RegisterNetEvent('esx_fbi_job:handcuff')
 AddEventHandler('esx_fbi_job:handcuff', function(target)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
@@ -68,7 +68,7 @@ AddEventHandler('esx_fbi_job:handcuff', function(target)
 	end
 end)
 
-RegisterServerEvent('esx_fbi_job:drag')
+RegisterNetEvent('esx_fbi_job:drag')
 AddEventHandler('esx_fbi_job:drag', function(target)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
@@ -79,7 +79,7 @@ AddEventHandler('esx_fbi_job:drag', function(target)
 	end
 end)
 
-RegisterServerEvent('esx_fbi_job:putInVehicle')
+RegisterNetEvent('esx_fbi_job:putInVehicle')
 AddEventHandler('esx_fbi_job:putInVehicle', function(target)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
@@ -90,7 +90,7 @@ AddEventHandler('esx_fbi_job:putInVehicle', function(target)
 	end
 end)
 
-RegisterServerEvent('esx_fbi_job:OutVehicle')
+RegisterNetEvent('esx_fbi_job:OutVehicle')
 AddEventHandler('esx_fbi_job:OutVehicle', function(target)
 	local xPlayer = ESX.GetPlayerFromId(source)
 
@@ -101,7 +101,7 @@ AddEventHandler('esx_fbi_job:OutVehicle', function(target)
 	end
 end)
 
-RegisterServerEvent('esx_fbi_job:getStockItem')
+RegisterNetEvent('esx_fbi_job:getStockItem')
 AddEventHandler('esx_fbi_job:getStockItem', function(itemName, count)
 	local _source = source
 	local xPlayer = ESX.GetPlayerFromId(_source)
@@ -124,10 +124,9 @@ AddEventHandler('esx_fbi_job:getStockItem', function(itemName, count)
 			xPlayer.showNotification(_U('quantity_invalid'))
 		end
 	end)
-
 end)
 
-RegisterServerEvent('esx_fbi_job:putStockItems')
+RegisterNetEvent('esx_fbi_job:putStockItems')
 AddEventHandler('esx_fbi_job:putStockItems', function(itemName, count)
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local sourceItem = xPlayer.getInventoryItem(itemName)
@@ -143,73 +142,48 @@ AddEventHandler('esx_fbi_job:putStockItems', function(itemName, count)
 		else
 			xPlayer.showNotification(_U('quantity_invalid'))
 		end
-
 	end)
-
 end)
 
-ESX.RegisterServerCallback('esx_fbi_job:getOtherPlayerData', function(source, cb, target)
-	if Config.EnableESXIdentity then
-		local xPlayer = ESX.GetPlayerFromId(target)
-		local result = MySQL.Sync.fetchAll('SELECT firstname, lastname, sex, dateofbirth, height FROM users WHERE identifier = @identifier', {
-			['@identifier'] = xPlayer.identifier
-		})
+ESX.RegisterServerCallback('esx_fbi_job:getOtherPlayerData', function(source, cb, target, notify)
+	local xPlayer = ESX.GetPlayerFromId(target)
 
-		local firstname = result[1].firstname
-		local lastname  = result[1].lastname
-		local sex       = result[1].sex
-		local dob       = result[1].dateofbirth
-		local height    = result[1].height
+	if notify then
+		xPlayer.showNotification(_U('being_searched'))
+	end
+
+	if xPlayer then
 
 		local data = {
-			name      = GetPlayerName(target),
-			job       = xPlayer.job,
-			inventory = xPlayer.inventory,
-			accounts  = xPlayer.accounts,
-			weapons   = xPlayer.loadout,
-			firstname = firstname,
-			lastname  = lastname,
-			sex       = sex,
-			dob       = dob,
-			height    = height
+			name = xPlayer.getName(),
+			job = xPlayer.job.label,
+			grade = xPlayer.job.grade_label,
+			inventory = xPlayer.getInventory(),
+			accounts = xPlayer.getAccounts(),
+			weapons = xPlayer.getLoadout()
 		}
 
-		TriggerEvent('esx_status:getStatus', target, 'drunk', function(status)
-			if status ~= nil then
-				data.drunk = math.floor(status.percent)
-			end
-		end)
+		if Config.EnableESXIdentity then
+			data.dob = xPlayer.get('dateofbirth')
+			data.height = xPlayer.get('height')
 
-		if Config.EnableLicenses then
-			TriggerEvent('esx_license:getLicenses', target, function(licenses)
-				data.licenses = licenses
-				cb(data)
-			end)
-		else
-			cb(data)
+			if xPlayer.get('sex') == 'm' then data.sex = 'male' else data.sex = 'female' end
 		end
-	else
-		local xPlayer = ESX.GetPlayerFromId(target)
-
-		local data = {
-			name       = GetPlayerName(target),
-			job        = xPlayer.job,
-			inventory  = xPlayer.inventory,
-			accounts   = xPlayer.accounts,
-			weapons    = xPlayer.loadout
-		}
 
 		TriggerEvent('esx_status:getStatus', target, 'drunk', function(status)
 			if status ~= nil then
-				data.drunk = math.floor(status.percent)
+				data.drunk = ESX.Math.Round(status.percent)
+			end
+
+			if Config.EnableLicenses then
+				TriggerEvent('esx_license:getLicenses', target, function(licenses)
+					data.licenses = licenses
+					cb(data)
+				end)
+			else
+				cb(data)
 			end
 		end)
-
-		TriggerEvent('esx_license:getLicenses', target, function(licenses)
-			data.licenses = licenses
-		end)
-
-		cb(data)
 	end
 end)
 
@@ -224,29 +198,35 @@ ESX.RegisterServerCallback('esx_fbi_job:getFineList', function(source, cb, categ
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:getVehicleInfos', function(source, cb, plate)
-
 	MySQL.Async.fetchAll('SELECT * FROM owned_vehicles WHERE @plate = plate', {
 		['@plate'] = plate
 	}, function(result)
-
-		local retrivedInfo = {
-			plate = plate
-		}
+		local retrivedInfo = {plate = plate}
 
 		if result[1] then
+			local xPlayer = ESX.GetPlayerFromIdentifier(result[1].owner)
 
-			MySQL.Async.fetchAll('SELECT name, firstname, lastname FROM users WHERE identifier = @identifier',  {
-				['@identifier'] = result[1].owner
-			}, function(result2)
-
-				if Config.EnableESXIdentity then
-					retrivedInfo.owner = result2[1].firstname .. ' ' .. result2[1].lastname
-				else
-					retrivedInfo.owner = result2[1].name
-				end
-
+			-- is the owner online?
+			if xPlayer then
+				retrivedInfo.owner = xPlayer.getName()
 				cb(retrivedInfo)
-			end)
+			else
+				MySQL.Async.fetchAll('SELECT name, firstname, lastname FROM users WHERE identifier = @identifier',  {
+					['@identifier'] = result[1].owner
+				}, function(result2)
+					if result2[1] then
+						if Config.EnableESXIdentity then
+							retrivedInfo.owner = ('%s %s'):format(result2[1].firstname, result2[1].lastname)
+						else
+							retrivedInfo.owner = result2[1].name
+						end
+
+						cb(retrivedInfo)
+					else
+						cb(retrivedInfo)
+					end
+				end)
+			end
 		else
 			cb(retrivedInfo)
 		end
@@ -257,14 +237,13 @@ ESX.RegisterServerCallback('esx_fbi_job:getVehicleFromPlate', function(source, c
 	MySQL.Async.fetchAll('SELECT owner FROM owned_vehicles WHERE plate = @plate', {
 		['@plate'] = plate
 	}, function(result)
-		if result[1] ~= nil then
-
+		if result[1] then
 			MySQL.Async.fetchAll('SELECT name, firstname, lastname FROM users WHERE identifier = @identifier',  {
 				['@identifier'] = result[1].owner
 			}, function(result2)
 
 				if Config.EnableESXIdentity then
-					cb(result2[1].firstname .. ' ' .. result2[1].lastname, true)
+					cb(('%s %s'):format(result2[1].firstname, result2[1].lastname), true)
 				else
 					cb(result2[1].name, true)
 				end
@@ -277,9 +256,7 @@ ESX.RegisterServerCallback('esx_fbi_job:getVehicleFromPlate', function(source, c
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:getArmoryWeapons', function(source, cb)
-
 	TriggerEvent('esx_datastore:getSharedDataStore', 'society_fbi', function(store)
-
 		local weapons = store.get('weapons')
 
 		if weapons == nil then
@@ -287,13 +264,10 @@ ESX.RegisterServerCallback('esx_fbi_job:getArmoryWeapons', function(source, cb)
 		end
 
 		cb(weapons)
-
 	end)
-
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:addArmoryWeapon', function(source, cb, weaponName, removeWeapon)
-
 	local xPlayer = ESX.GetPlayerFromId(source)
 
 	if removeWeapon then
@@ -301,13 +275,7 @@ ESX.RegisterServerCallback('esx_fbi_job:addArmoryWeapon', function(source, cb, w
 	end
 
 	TriggerEvent('esx_datastore:getSharedDataStore', 'society_fbi', function(store)
-
-		local weapons = store.get('weapons')
-
-		if weapons == nil then
-			weapons = {}
-		end
-
+		local weapons = store.get('weapons') or {}
 		local foundWeapon = false
 
 		for i=1, #weapons, 1 do
@@ -328,7 +296,6 @@ ESX.RegisterServerCallback('esx_fbi_job:addArmoryWeapon', function(source, cb, w
 		store.set('weapons', weapons)
 		cb()
 	end)
-
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:removeArmoryWeapon', function(source, cb, weaponName)
@@ -336,12 +303,7 @@ ESX.RegisterServerCallback('esx_fbi_job:removeArmoryWeapon', function(source, cb
 	xPlayer.addWeapon(weaponName, 500)
 
 	TriggerEvent('esx_datastore:getSharedDataStore', 'society_fbi', function(store)
-		local weapons = store.get('weapons')
-
-		if weapons == nil then
-			weapons = {}
-		end
-
+		local weapons = store.get('weapons') or {}
 		local foundWeapon = false
 
 		for i=1, #weapons, 1 do
@@ -354,7 +316,7 @@ ESX.RegisterServerCallback('esx_fbi_job:removeArmoryWeapon', function(source, cb
 
 		if not foundWeapon then
 			table.insert(weapons, {
-				name  = weaponName,
+				name = weaponName,
 				count = 0
 			})
 		end
@@ -395,7 +357,6 @@ ESX.RegisterServerCallback('esx_fbi_job:buyWeapon', function(source, cb, weaponN
 		elseif type == 2 then
 			local price = selectedWeapon.components[componentNum]
 			local weaponNum, weapon = ESX.GetWeapon(weaponName)
-
 			local component = weapon.components[componentNum]
 
 			if component then
@@ -476,7 +437,6 @@ ESX.RegisterServerCallback('esx_fbi_job:storeNearbyVehicle', function(source, cb
 			end
 		end)
 	end
-
 end)
 
 function getPriceFromHash(hashKey, jobGrade, type)
@@ -510,37 +470,36 @@ ESX.RegisterServerCallback('esx_fbi_job:getPlayerInventory', function(source, cb
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local items   = xPlayer.inventory
 
-	cb( { items = items } )
+	cb({items = items})
 end)
 
 AddEventHandler('playerDropped', function()
 	-- Save the source in case we lose it (which happens a lot)
-	local _source = source
+	local playerId = source
 	
 	-- Did the player ever join?
-	if _source ~= nil then
-		local xPlayer = ESX.GetPlayerFromId(_source)
+	if playerId then
+		local xPlayer = ESX.GetPlayerFromId(playerId)
 		
 		-- Is it worth telling all clients to refresh?
-		if xPlayer ~= nil and xPlayer.job ~= nil and xPlayer.job.name == 'fbi' then
+		if xPlayer and xPlayer.job.name == 'police' then
 			Citizen.Wait(5000)
 			TriggerClientEvent('esx_fbi_job:updateBlip', -1)
 		end
 	end	
 end)
 
-RegisterServerEvent('esx_fbi_job:spawned')
+RegisterNetEvent('esx_fbi_job:spawned')
 AddEventHandler('esx_fbi_job:spawned', function()
-	local _source = source
-	local xPlayer = ESX.GetPlayerFromId(_source)
+	local xPlayer = ESX.GetPlayerFromId(playerId)
 	
-	if xPlayer ~= nil and xPlayer.job ~= nil and xPlayer.job.name == 'fbi' then
+	if xPlayer and xPlayer.job.name == 'police' then
 		Citizen.Wait(5000)
 		TriggerClientEvent('esx_fbi_job:updateBlip', -1)
 	end
 end)
 
-RegisterServerEvent('esx_fbi_job:forceBlip')
+RegisterNetEvent('esx_fbi_job:forceBlip')
 AddEventHandler('esx_fbi_job:forceBlip', function()
 	TriggerClientEvent('esx_fbi_job:updateBlip', -1)
 end)
@@ -556,9 +515,4 @@ AddEventHandler('onResourceStop', function(resource)
 	if resource == GetCurrentResourceName() then
 		TriggerEvent('esx_phone:removeNumber', 'fbi')
 	end
-end)
-
-RegisterServerEvent('esx_fbi_job:message')
-AddEventHandler('esx_fbi_job:message', function(target, msg)
-	TriggerClientEvent('esx:showNotification', target, msg)
 end)
