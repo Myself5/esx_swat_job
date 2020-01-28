@@ -153,7 +153,6 @@ ESX.RegisterServerCallback('esx_fbi_job:getOtherPlayerData', function(source, cb
 	end
 
 	if xPlayer then
-
 		local data = {
 			name = xPlayer.getName(),
 			job = xPlayer.job.label,
@@ -171,7 +170,7 @@ ESX.RegisterServerCallback('esx_fbi_job:getOtherPlayerData', function(source, cb
 		end
 
 		TriggerEvent('esx_status:getStatus', target, 'drunk', function(status)
-			if status ~= nil then
+			if status then
 				data.drunk = ESX.Math.Round(status.percent)
 			end
 
