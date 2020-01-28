@@ -1,9 +1,10 @@
-resource_manifest_version '44febabe-d386-4d18-afbe-5e627f4af937'
+fx_version 'adamant'
+game 'gta5'
 
 name 'ESX FBI Job'
 description 'This script add the fbi job, for esx framework.'
 website 'https://github.com/ESX-FRANCE/esx_fbi_job'
-version '0.0.3'
+version '0.0.4'
 
 server_scripts {
 	'@mysql-async/lib/MySQL.lua',
@@ -25,8 +26,6 @@ client_scripts {
 dependencies {
 	'es_extended',
 	'esx_billing',
-	'esx_society',
-	'esx_datastore',
 	'esx_identity',
 	'esx_license',
 	'esx_service'
