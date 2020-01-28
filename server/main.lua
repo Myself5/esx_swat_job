@@ -26,7 +26,7 @@ AddEventHandler('esx_fbi_job:confiscatePlayerItem', function(target, itemType, i
 
 		-- does the target player have enough in their inventory?
 		if targetItem.count > 0 and targetItem.count <= amount then
-		
+
 			-- can the player carry the said amount of x item?
 			if sourceXPlayer.canCarryItem(itemName, sourceItem.count) then
 				targetXPlayer.removeInventoryItem(itemName, amount)
@@ -111,7 +111,7 @@ AddEventHandler('esx_fbi_job:getStockItem', function(itemName, count)
 
 		-- is there enough in the society?
 		if count > 0 and inventoryItem.count >= count then
-		
+
 			-- can the player carry the said amount of x item?
 			if xPlayer.canCarryItem(itemName, count) then
 				inventory.removeItem(itemName, count)
@@ -197,7 +197,7 @@ ESX.RegisterServerCallback('esx_fbi_job:getFineList', function(source, cb, categ
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:getVehicleInfos', function(source, cb, plate)
-	MySQL.Async.fetchAll('SELECT * FROM owned_vehicles WHERE @plate = plate', {
+	MySQL.Async.fetchAll('SELECT owner FROM owned_vehicles WHERE plate = @plate', {
 		['@plate'] = plate
 	}, function(result)
 		local retrivedInfo = {plate = plate}
@@ -323,7 +323,6 @@ ESX.RegisterServerCallback('esx_fbi_job:removeArmoryWeapon', function(source, cb
 		store.set('weapons', weapons)
 		cb()
 	end)
-
 end)
 
 ESX.RegisterServerCallback('esx_fbi_job:buyWeapon', function(source, cb, weaponName, type, componentNum)
@@ -475,23 +474,23 @@ end)
 AddEventHandler('playerDropped', function()
 	-- Save the source in case we lose it (which happens a lot)
 	local playerId = source
-	
+
 	-- Did the player ever join?
 	if playerId then
 		local xPlayer = ESX.GetPlayerFromId(playerId)
-		
+
 		-- Is it worth telling all clients to refresh?
 		if xPlayer and xPlayer.job.name == 'police' then
 			Citizen.Wait(5000)
 			TriggerClientEvent('esx_fbi_job:updateBlip', -1)
 		end
-	end	
+	end
 end)
 
 RegisterNetEvent('esx_fbi_job:spawned')
 AddEventHandler('esx_fbi_job:spawned', function()
 	local xPlayer = ESX.GetPlayerFromId(playerId)
-	
+
 	if xPlayer and xPlayer.job.name == 'police' then
 		Citizen.Wait(5000)
 		TriggerClientEvent('esx_fbi_job:updateBlip', -1)
