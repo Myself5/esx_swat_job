@@ -18,6 +18,7 @@ Config.EnablePoliceFine           = true  -- enable fine, requires esx_policejob
 
 Config.EnableESXService           = false -- enable esx service?
 Config.MaxInService               = 5
+
 Config.Locale                     = 'fr' -- replace with the agreed language, available in the locales/ folder. example 'en'.
 
 Config.FBIStations = {
