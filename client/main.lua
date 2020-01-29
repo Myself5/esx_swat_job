@@ -1,7 +1,7 @@
-local PlayerData, CurrentActionData, handcuffTimer, dragStatus, blipsCops, currentTask, spawnedVehicles = {}, {}, {}, {}, {}, {}, {}
-local HasAlreadyEnteredMarker, isDead, isHandcuffed, hasAlreadyJoined, playerInService, isInShopMenu = false, false, false, false, false, false
+local CurrentActionData, handcuffTimer, dragStatus, blipsCops, currentTask = {}, {}, {}, {}, {}
+local HasAlreadyEnteredMarker, isDead, isHandcuffed, hasAlreadyJoined, playerInService = false, false, false, false, false
 local LastStation, LastPart, LastPartNum, LastEntity, CurrentAction, CurrentActionMsg
-dragStatus.isDragged = false
+dragStatus.isDragged, isInShopMenu = false, false
 ESX = nil
 
 Citizen.CreateThread(function()
@@ -14,7 +14,7 @@ Citizen.CreateThread(function()
 		Citizen.Wait(10)
 	end
 
-	PlayerData = ESX.GetPlayerData()
+	ESX.PlayerData = ESX.GetPlayerData()
 end)
 
 function TeleportFadeEffect(entity, coords)
@@ -63,7 +63,7 @@ end
 
 function OpenCloakroomMenu()
 	local playerPed = PlayerPedId()
-	local grade = PlayerData.job.grade_name
+	local grade = ESX.PlayerData.job.grade_name
 
 	local elements = {
 		{label = _U('citizen_wear'), value = 'citizen_wear'},
@@ -685,7 +685,7 @@ function OpenBuyWeaponsMenu()
 	local playerPed = PlayerPedId()
 	PlayerData = ESX.GetPlayerData()
 
-	for k,v in ipairs(Config.AuthorizedWeapons[PlayerData.job.grade_name]) do
+	for k,v in ipairs(Config.AuthorizedWeapons[ESX.PlayerData.job.grade_name]) do
 		local weaponNum, weapon = ESX.GetWeapon(v.weapon)
 		local components, label = {}
 		local hasWeapon = HasPedGotWeapon(playerPed, GetHashKey(v.weapon), false)
@@ -922,7 +922,7 @@ end
 
 RegisterNetEvent('esx:setJob')
 AddEventHandler('esx:setJob', function(job)
-	PlayerData.job = job
+	ESX.PlayerData.job = job
 
 	Citizen.Wait(5000)
 	TriggerServerEvent('esx_fbi_job:forceBlip')
@@ -941,7 +941,7 @@ end)
 
 -- don't show dispatches if the player isn't in service
 AddEventHandler('esx_phone:cancelMessage', function(dispatchNumber)
-	if PlayerData.job and PlayerData.job.name == 'fbi' and PlayerData.job.name == dispatchNumber then
+	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'fbi' and ESX.PlayerData.job.name == dispatchNumber then
 		if Config.EnableESXService and not playerInService then
 			CancelEvent()
 		end
@@ -983,7 +983,7 @@ end)
 AddEventHandler('esx_fbi_job:hasEnteredEntityZone', function(entity)
 	local playerPed = PlayerPedId()
 
-	if PlayerData.job and PlayerData.job.name == 'fbi' and IsPedOnFoot(playerPed) then
+	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'fbi' and IsPedOnFoot(playerPed) then
 		CurrentAction     = 'remove_entity'
 		CurrentActionMsg  = _U('remove_prop')
 		CurrentActionData = {entity = entity}
@@ -1230,7 +1230,7 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
 
-		if PlayerData.job and PlayerData.job.name == 'fbi' then
+		if ESX.PlayerData.job and ESX.PlayerData.job.name == 'fbi' then
 			local playerPed = PlayerPedId()
 			local playerCoords = GetEntityCoords(playerPed)
 			local isInMarker, hasExited, letSleep = false, false, true
@@ -1276,7 +1276,7 @@ Citizen.CreateThread(function()
 					end
 				end
 
-				if Config.EnablePlayerManagement and PlayerData.job.grade_name == 'boss' then
+				if Config.EnablePlayerManagement and ESX.PlayerData.job.grade_name == 'boss' then
 					for i=1, #v.BossActions, 1 do
 						local distance = #(playerCoords - v.BossActions[i])
 
@@ -1390,8 +1390,7 @@ Citizen.CreateThread(function()
 		if CurrentAction then
 			ESX.ShowHelpNotification(CurrentActionMsg)
 
-			if IsControlJustReleased(0, 38) and PlayerData.job and PlayerData.job.name == 'fbi' then
-
+			if IsControlJustReleased(0, 38) and ESX.PlayerData.job and ESX.PlayerData.job.name == 'fbi' then
 				if CurrentAction == 'menu_cloakroom' then
 					OpenCloakroomMenu()
 				elseif CurrentAction == 'menu_armory' then
@@ -1431,7 +1430,7 @@ Citizen.CreateThread(function()
 			end
 		end -- CurrentAction end
 
-		if IsControlJustReleased(0, 167) and not isDead and PlayerData.job and PlayerData.job.name == 'fbi' and not ESX.UI.Menu.IsOpen('default', GetCurrentResourceName(), 'fbi_actions') then
+		if IsControlJustReleased(0, 167) and not isDead and ESX.PlayerData.job and ESX.PlayerData.job.name == 'fbi' and not ESX.UI.Menu.IsOpen('default', GetCurrentResourceName(), 'fbi_actions') then
 			if not Config.EnableESXService then
 				OpenFBIActionsMenu()
 			elseif playerInService then
@@ -1490,7 +1489,7 @@ AddEventHandler('esx_fbi_job:updateBlip', function()
 	end
 
 	-- Is the player a cop? In that case show all the blips for other cops
-	if PlayerData.job and PlayerData.job.name == 'fbi' then
+	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'fbi' then
 		ESX.TriggerServerCallback('esx_society:getOnlinePlayers', function(players)
 			for i=1, #players, 1 do
 				if players[i].job.name == 'fbi' then
