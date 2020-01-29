@@ -21,9 +21,7 @@ Config.MaxInService               = 5
 Config.Locale                     = 'fr' -- replace with the agreed language, available in the locales/ folder. example 'en'.
 
 Config.FBIStations = {
-
 	FBI = {
-
 		Blip = {
 			Coords  = vector3(112.1, -749.3, 45.7),
 			Sprite  = 88,
@@ -111,21 +109,20 @@ Config.AuthorizedWeapons = {
 
 -- https://wiki.rage.mp/index.php?title=Vehicles
 Config.AuthorizedVehicles = {
-	Shared = {
-		{model = 'fbi', label = 'FBI Car', price = 3500},
-		{model = 'fbi2', label = 'FBI SUV', price = 5000}
-	},
-	agent = {},
-	special = {},
-	supervisor = {
-		{model = 'pbus', label = 'Prison Bus', price = 6000}
-	},
-	assistant = {
-		{model = 'pbus', label = 'Prison Bus', price = 6000}
-	},
-	boss = {
-		{model = 'pbus', label = 'Prison Bus', price = 6000}
-	}
+    car = {
+        agent = {
+            {model = 'fbi', price = 18000}
+        },
+        special = {
+            {model = 'fbi2', price = 25000}
+        },
+        supervisor = {
+            {model = 'pbus', price = 60000},
+            {model = 'riot', price = 70000}
+        },
+        assistant = {},
+        boss = {}
+    }
 }
 
 -- CHECK SKINCHANGER CLIENT MAIN.LUA for matching elements
