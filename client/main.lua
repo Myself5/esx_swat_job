@@ -39,28 +39,24 @@ function cleanPlayer(playerPed)
 	ResetPedMovementClipset(playerPed, 0)
 end
 
-function setUniform(job, playerPed)
+function setUniform(uniform, playerPed)
 	TriggerEvent('skinchanger:getSkin', function(skin)
-		if skin.sex == 0 then
-			if Config.Uniforms[job].male then
-				TriggerEvent('skinchanger:loadClothes', skin, Config.Uniforms[job].male)
-			else
-				ESX.ShowNotification(_U('no_outfit'))
-			end
+		local uniformObject
 
-			if job == 'bullet_wear' then
+		if skin.sex == 0 then
+			uniformObject = Config.Uniforms[uniform].male
+		else
+			uniformObject = Config.Uniforms[uniform].female
+		end
+
+		if uniformObject then
+			TriggerEvent('skinchanger:loadClothes', skin, uniformObject)
+
+			if uniform == 'bullet_wear' then
 				SetPedArmour(playerPed, 100)
 			end
 		else
-			if Config.Uniforms[job].female then
-				TriggerEvent('skinchanger:loadClothes', skin, Config.Uniforms[job].female)
-			else
-				ESX.ShowNotification(_U('no_outfit'))
-			end
-
-			if job == 'bullet_wear' then
-				SetPedArmour(playerPed, 100)
-			end
+			ESX.ShowNotification(_U('no_outfit'))
 		end
 	end)
 end
@@ -70,21 +66,10 @@ function OpenCloakroomMenu()
 	local grade = PlayerData.job.grade_name
 
 	local elements = {
-		{ label = _U('citizen_wear'), value = 'citizen_wear' },
-		{ label = _U('bullet_wear'), value = 'bullet_wear' }
+		{label = _U('citizen_wear'), value = 'citizen_wear'},
+		{label = _U('fbi_wear'), uniform = grade},
+		{label = _U('bullet_wear'), uniform = 'bullet_wear'}
 	}
-
-	if grade == 'agent' then
-		table.insert(elements, {label = _U('fbi_wear'), value = 'agent_wear'})
-	elseif grade == 'special' then
-		table.insert(elements, {label = _U('fbi_wear'), value = 'special_wear'})
-	elseif grade == 'supervisor' then
-		table.insert(elements, {label = _U('fbi_wear'), value = 'supervisor_wear'})
-	elseif grade == 'assistant' then
-		table.insert(elements, {label = _U('fbi_wear'), value = 'assistant_wear'})
-	elseif grade == 'boss' then
-		table.insert(elements, {label = _U('fbi_wear'), value = 'boss_wear'})
-	end
 
 	ESX.UI.Menu.CloseAll()
 
@@ -100,7 +85,7 @@ function OpenCloakroomMenu()
 				TriggerEvent('skinchanger:loadSkin', skin)
 			end)
 
-			if Config.MaxInService ~= -1 then
+			if Config.EnableESXService then
 				ESX.TriggerServerCallback('esx_service:isInService', function(isInService)
 					if isInService then
 						playerInService = false
@@ -122,8 +107,8 @@ function OpenCloakroomMenu()
 			end
 		end
 
-		if Config.MaxInService ~= -1 and data.current.value ~= 'citizen_wear' then
-			local serviceOk = 'waiting'
+		if Config.EnableESXService and data.current.value ~= 'citizen_wear' then
+			local awaitService
 
 			ESX.TriggerServerCallback('esx_service:isInService', function(isInService)
 				if not isInService then
@@ -133,7 +118,7 @@ function OpenCloakroomMenu()
 							ESX.ShowNotification(_U('service_max', inServiceCount, maxInService))
 						else
 
-							serviceOk = true
+							awaitService = true
 							playerInService = true
 
 							local notification = {
@@ -150,31 +135,23 @@ function OpenCloakroomMenu()
 					end, 'fbi')
 
 				else
-					serviceOk = true
+					awaitService = true
 				end
 			end, 'fbi')
 
-			while type(serviceOk) == 'string' do
+			while type(awaitService) == nil do
 				Citizen.Wait(5)
 			end
 
 			-- if we couldn't enter service don't let the player get changed
-			if not serviceOk then
+			if not awaitService then
 				return
 			end
 		end
 
-		if
-			data.current.value == 'agent_wear' or
-			data.current.value == 'special_wear' or
-			data.current.value == 'supervisor_wear' or
-			data.current.value == 'assistant_wear' or
-			data.current.value == 'boss_wear' or
-			data.current.value == 'bullet_wear'
-		then
-			setUniform(data.current.value, playerPed)
+		if data.current.uniform then
+			setUniform(data.current.uniform, playerPed)
 		end
-
 	end, function(data, menu)
 		menu.close()
 
@@ -362,15 +339,15 @@ function StoreNearbyVehicle(playerCoords)
 			IsBusy = true
 
 			Citizen.CreateThread(function()
-				BeginTextCommandBusyString('STRING')
+				BeginTextCommandBusyspinnerOn('STRING')
 				AddTextComponentSubstringPlayerName(_U('garage_storing'))
-				EndTextCommandBusyString(4)
+				EndTextCommandBusyspinnerOn(4)
 
 				while IsBusy do
 					Citizen.Wait(100)
 				end
 
-				RemoveLoadingPrompt()
+				BusyspinnerOff()
 			end)
 
 			-- Workaround for vehicle not deleting when other players are near it.
@@ -532,16 +509,16 @@ function WaitForVehicleToLoad(modelHash)
 	if not HasModelLoaded(modelHash) then
 		RequestModel(modelHash)
 
-		BeginTextCommandBusyString('STRING')
+		BeginTextCommandBusyspinnerOn('STRING')
 		AddTextComponentSubstringPlayerName(_U('vehicleshop_awaiting_model'))
-		EndTextCommandBusyString(4)
+		EndTextCommandBusyspinnerOn(4)
 
 		while not HasModelLoaded(modelHash) do
 			Citizen.Wait(0)
 			DisableAllControlActions(0)
 		end
 
-		RemoveLoadingPrompt()
+		BusyspinnerOff()
 	end
 end
 
@@ -570,17 +547,11 @@ function OpenFBIActionsMenu()
 			}
 
 			if Config.EnablePoliceFine then
-				table.insert(elements, {
-					label = _U('fine'),
-					value = 'fine'
-				})
+				table.insert(elements, {label = _U('fine'), value = 'fine'})
 			end
 
 			if Config.EnableLicenses then
-				table.insert(elements, {
-					label = _U('license_check'), 
-					value = 'license'
-				})
+				table.insert(elements, {label = _U('license_check'), value = 'license'})
 			end
 
 			ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'citizen_interaction', {
@@ -1293,7 +1264,7 @@ end)
 -- don't show dispatches if the player isn't in service
 AddEventHandler('esx_phone:cancelMessage', function(dispatchNumber)
 	if PlayerData.job and PlayerData.job.name == 'fbi' and PlayerData.job.name == dispatchNumber then
-		if Config.MaxInService ~= -1 and not playerInService then
+		if Config.EnableESXService and not playerInService then
 			CancelEvent()
 		end
 	end
@@ -1846,7 +1817,7 @@ AddEventHandler('esx_fbi_job:updateBlip', function()
 	blipsCops = {}
 
 	-- Enable blip?
-	if Config.MaxInService ~= -1 and not playerInService then
+	if Config.EnableESXService and not playerInService then
 		return
 	end
 
@@ -1872,7 +1843,7 @@ end)
 AddEventHandler('playerSpawned', function(spawn)
 	isDead = false
 	TriggerEvent('esx_fbi_job:unrestrain')
-	
+
 	if not hasAlreadyJoined then
 		TriggerServerEvent('esx_fbi_job:spawned')
 	end
@@ -1888,7 +1859,7 @@ AddEventHandler('onResourceStop', function(resource)
 		TriggerEvent('esx_fbi_job:unrestrain')
 		TriggerEvent('esx_phone:removeSpecialContact', 'fbi')
 
-		if Config.MaxInService ~= -1 then
+		if Config.EnableESXService then
 			TriggerServerEvent('esx_service:disableService', 'fbi')
 		end
 
