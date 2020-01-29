@@ -1,18 +1,18 @@
 Locales['fr'] = {
--- Cloakroom
+  -- Cloakroom
   ['cloakroom'] = 'vestiaire',
   ['citizen_wear'] = 'tenue Civil',
   ['fbi_wear'] = 'tenue FBI',
   ['bullet_wear'] = 'gilet pare-balles',
   ['no_outfit'] = 'il n\'y a pas d\'uniforme à votre taille...',
   ['open_cloackroom'] = 'appuyez sur ~INPUT_CONTEXT~ pour vous changer',
--- Elevator
+  -- Elevator
   ['elevator'] = 'ascenseur',
   ['elevator_top'] = 'aller dans les bureaux',
   ['elevator_down'] = 'aller au rez de chaussée',
   ['elevator_parking'] = 'aller au parking',
   ['open_elevator'] = 'appuyez sur ~INPUT_CONTEXT~ pour pendre l\'ascenseur',
--- Armory
+  -- Armory
   ['remove_object'] = 'prendre Objet',
   ['deposit_object'] = 'déposer objet',
   ['get_weapon'] = 'prendre Arme',
@@ -25,12 +25,12 @@ Locales['fr'] = {
   ['armory_item'] = '$%s',
   ['armory_weapontitle'] = 'armurerie - Acheter une arme',
   ['armory_componenttitle'] = 'armurerie - Accessoires d\'armes',
-  ['armory_bought'] = 'vous achetez un ~y~%s~s~ pour ~r~$%s~s~',
+  ['armory_bought'] = 'vous achetez un ~y~%s~s~ pour ~g~%s$~s~',
   ['armory_money'] = 'vous ne pouvez pas acheter cette arme',
   ['armory_hascomponent'] = 'vous avez cet accessoire équipé!',
   ['get_weapon_menu'] = 'armurerie - Retirer arme',
   ['put_weapon_menu'] = 'armurerie - Stocker arme',
--- Vehicles
+  -- Vehicles
   ['vehicle_menu'] = 'véhicule',
   ['vehicle_blocked'] = 'tous les points de spawn sont bloqués!',
   ['garage_prompt'] = 'appuyez sur ~INPUT_CONTEXT~ pour accéder aux ~y~Actions Véhicule~s~.',
@@ -48,6 +48,7 @@ Locales['fr'] = {
   ['garage_storeditem'] = 'ouvrir le garage',
   ['garage_storeitem'] = 'ranger le véhicule',
   ['garage_buyitem'] = 'magasin véhicule',
+  ['garage_notauthorized'] = 'vous n\'êtes pas autorisé à acheter ce type de véhicules.',
   ['shop_item'] = '$%s',
   ['vehicleshop_title'] = 'magasin véhicule',
   ['vehicleshop_confirm'] = 'voulez-vous acheter ce véhicule?',
@@ -56,7 +57,7 @@ Locales['fr'] = {
   ['vehicleshop_awaiting_model'] = 'le véhicule est actuellement en ~g~PRÉPARATION~s~ veuillez patienter',
   ['confirm_no'] = 'non',
   ['confirm_yes'] = 'oui',
--- Service
+  -- Service
   ['service_max'] = 'vous ne pouvez pas entrer en service, officiers en service: %s/%s',
   ['service_not'] = 'vous n\'êtes pas en service! Vous devez d\'abord enfiler votre tenue.',
   ['service_anonunce'] = 'prise de service',
@@ -64,7 +65,7 @@ Locales['fr'] = {
   ['service_in_announce'] = 'l\'officier ~y~%s~s~ est entré en service!',
   ['service_out'] = 'vous avez terminé votre service.',
   ['service_out_announce'] = 'l\'officier ~y~%s~s~ a quitté son service.',
--- Action Menu
+  -- Action Menu
   ['fbi_actions'] = 'FBI',
   ['citizen_interaction'] = 'interaction citoyen',
   ['vehicle_interaction'] = 'interaction véhicule',
@@ -84,7 +85,7 @@ Locales['fr'] = {
   ['licence_you_revoked'] = 'vous avez révoqué un ~b~%s~s~ qui appartenait à ~y~%s~s~',
   ['no_players_nearby'] = 'aucun joueur à proximité',
   ['being_searched'] = 'vous êtes ~y~recherché(e)~s~ par le ~b~FBI~s~',
--- Vehicle interaction
+  -- Vehicle interaction
   ['vehicle_info'] = 'infos véhicule',
   ['pick_lock'] = 'crocheter véhicule',
   ['vehicle_unlocked'] = 'véhicule ~g~déverouillé~s~',
@@ -99,14 +100,14 @@ Locales['fr'] = {
   ['search_database_error_invalid'] = 'Ce n\'est ~r~pas~s~ un ~y~numéro d\'enregistrement valide~s~',
   ['search_database_error_not_found'] = 'ce ~y~numéro d\'enregistrement ~s~est~r~ pas ~s~ enregistré sur un véhicule!',
   ['search_database_found'] = 'le véhicule est ~y~enregistré~s~ à ~b~%s~s~',
--- Traffic interaction
+  -- Traffic interaction
   ['traffic_interaction'] = 'interaction routière',
   ['cone'] = 'plot',
   ['barrier'] = 'barrière',
   ['spikestrips'] = 'herse',
   ['box'] = 'caisse',
   ['cash'] = 'caisse',
--- ID Card Menu
+  -- ID Card Menu
   ['name'] = 'nom: %s',
   ['job'] = 'métier: %s',
   ['sex'] = 'sexe: %s',
@@ -116,7 +117,7 @@ Locales['fr'] = {
   ['unknown'] = 'inconnu',
   ['male'] = 'homme',
   ['female'] = 'femme',
--- Body Search Menu
+  -- Body Search Menu
   ['guns_label'] = '--- Armes ---',
   ['inventory_label'] = '--- Inventaire ---',
   ['license_label'] = ' --- Licenses ---',
@@ -135,13 +136,13 @@ Locales['fr'] = {
   ['average_offense'] = 'délit moyen',
   ['major_offense'] = 'délit grave',
   ['fine_total'] = 'amende: %s',
--- Traffic interaction
+  -- Traffic interaction
   ['traffic_interaction'] = 'interaction routière',
   ['cone'] = 'plot',
   ['barrier'] = 'barrière',
   ['spikestrips'] = 'herse',
   ['box'] = 'caisse',
--- ID Card Menu
+  -- ID Card Menu
   ['name'] = 'nom: %s',
   ['job'] = 'métier: %s',
   ['sex'] = 'sexe: %s',
@@ -152,7 +153,7 @@ Locales['fr'] = {
   ['unknown'] = 'inconnu',
   ['male'] = 'homme',
   ['female'] = 'femme',
--- Body Search Menu
+  -- Body Search Menu
   ['guns_label'] = '--- Armes ---',
   ['inventory_label'] = '--- Inventaire ---',
   ['license_label'] = ' --- Licenses ---',
@@ -171,11 +172,11 @@ Locales['fr'] = {
   ['average_offense'] = 'délit moyen',
   ['major_offense'] = 'délit grave',
   ['fine_total'] = 'amende: %s',
--- Vehicle Info Menu
+  -- Vehicle Info Menu
   ['plate'] = 'n°: %s',
   ['owner_unknown'] = 'propriétaire: Inconnu',
   ['owner'] = 'propriétaire: %s',
--- Weapons Menus
+  -- Weapons Menus
   ['get_weapon_menu'] = 'armurerie - Prendre Arme',
   ['put_weapon_menu'] = 'armurerie - Déposer Arme',
   ['buy_weapon_menu'] = 'armurerie - Acheter Armes',
