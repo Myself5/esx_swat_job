@@ -49,7 +49,6 @@ Locales['en'] = {
   ['garage_storeitem'] = 'store vehicle in garage',
   ['garage_buyitem'] = 'vehicle shop',
   ['garage_notauthorized'] = 'you\'re not authorized to buy this kind of vehicles.',
-  ['helicopter_prompt'] = 'press ~INPUT_CONTEXT~ to access the ~y~Helicopter Actions~s~.',
   ['shop_item'] = '$%s',
   ['vehicleshop_title'] = 'vehicle Shop',
   ['vehicleshop_confirm'] = 'do you want to buy this vehicle?',
