@@ -1393,10 +1393,10 @@ AddEventHandler('esx_fbi_job:unrestrain', function()
 end)
 
 RegisterNetEvent('esx_fbi_job:drag')
-AddEventHandler('esx_fbi_job:drag', function(copId)
+AddEventHandler('esx_fbi_job:drag', function(AgentId)
 	if isHandcuffed then
 		dragStatus.isDragged = not dragStatus.isDragged
-		dragStatus.CopId = copId
+		dragStatus.AgentId = AgentId
 	end
 end)
 
@@ -1408,7 +1408,7 @@ Citizen.CreateThread(function()
 		local playerPed = PlayerPedId()
 
 		if isHandcuffed and dragStatus.isDragged then
-			local targetPed = GetPlayerPed(GetPlayerFromServerId(dragStatus.CopId))
+			local targetPed = GetPlayerPed(GetPlayerFromServerId(dragStatus.AgentId))
 
 			if DoesEntityExist(targetPed) and IsPedOnFoot(targetPed) and not IsPedDeadOrDying(targetPed, true) then
 				if not wasDragged then
@@ -1717,7 +1717,7 @@ Citizen.CreateThread(function()
 				if CurrentAction == 'menu_cloakroom' then
 					OpenCloakroomMenu()
 				elseif CurrentAction == 'menu_armory' then
-					if Config.MaxInService == -1 then
+					if not Config.EnableESXService then
 						OpenArmoryMenu(CurrentActionData.station)
 					elseif playerInService then
 						OpenArmoryMenu(CurrentActionData.station)
@@ -1725,7 +1725,7 @@ Citizen.CreateThread(function()
 						ESX.ShowNotification(_U('service_not'))
 					end
 				elseif CurrentAction == 'menu_vehicle_spawner' then
-					if Config.MaxInService == -1 then
+					if not Config.EnableESXService then
 						OpenVehicleSpawnerMenu('car', CurrentActionData.station, CurrentActionData.part, CurrentActionData.partNum)
 					elseif playerInService then
 						OpenVehicleSpawnerMenu('car', CurrentActionData.station, CurrentActionData.part, CurrentActionData.partNum)
@@ -1738,6 +1738,7 @@ Citizen.CreateThread(function()
 					ESX.UI.Menu.CloseAll()
 					TriggerEvent('esx_society:openBossMenu', 'fbi', function(data, menu)
 						menu.close()
+
 						CurrentAction     = 'menu_boss_actions'
 						CurrentActionMsg  = _U('open_bossmenu')
 						CurrentActionData = {}
@@ -1753,7 +1754,7 @@ Citizen.CreateThread(function()
 		end -- CurrentAction end
 
 		if IsControlJustReleased(0, 167) and not isDead and PlayerData.job and PlayerData.job.name == 'fbi' and not ESX.UI.Menu.IsOpen('default', GetCurrentResourceName(), 'fbi_actions') then
-			if Config.MaxInService == -1 then
+			if not Config.EnableESXService then
 				OpenFBIActionsMenu()
 			elseif playerInService then
 				OpenFBIActionsMenu()
