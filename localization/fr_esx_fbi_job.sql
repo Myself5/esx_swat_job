@@ -1,13 +1,13 @@
 INSERT INTO `addon_account` (name, label, shared) VALUES
-	('society_fbi', 'FBI', 1)
+	('society_fbi','FBI',1)
 ;
 
 INSERT INTO `datastore` (name, label, shared) VALUES
-	('society_fbi', 'FBI', 1)
+	('society_fbi','FBI',1)
 ;
 
 INSERT INTO `addon_inventory` (name, label, shared) VALUES
-	('society_fbi', 'FBI', 1)
+	('society_fbi','FBI',1)
 ;
 
 INSERT INTO `jobs` (name, label) VALUES
