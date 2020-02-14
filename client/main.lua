@@ -528,17 +528,28 @@ function LookupVehicle()
 		title = _U('search_database_title'),
 	}, function(data, menu)
 		local length = string.len(data.value)
-		if data.value == nil or length < 2 or length > 13 then
+
+		if not data.value or length < 2 or length > 8 then
 			ESX.ShowNotification(_U('search_database_error_invalid'))
 		else
-			ESX.TriggerServerCallback('esx_fbi_job:getVehicleFromPlate', function(owner, found)
-				if found then
-					ESX.ShowNotification(_U('search_database_found', owner))
+			ESX.TriggerServerCallback('esx_fbi_job:getVehicleInfos', function(retrivedInfo)
+				local elements = {{label = _U('plate', retrivedInfo.plate)}}
+				menu.close()
+
+				if not retrivedInfo.owner then
+					table.insert(elements, {label = _U('owner_unknown')})
 				else
-					ESX.ShowNotification(_U('search_database_error_not_found'))
+					table.insert(elements, {label = _U('owner', retrivedInfo.owner)})
 				end
+
+				ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'vehicle_infos', {
+					title    = _U('vehicle_info'),
+					align    = 'top-left',
+					elements = elements
+				}, nil, function(data2, menu2)
+					menu2.close()
+				end)
 			end, data.value)
-			menu.close()
 		end
 	end, function(data, menu)
 		menu.close()
@@ -604,7 +615,7 @@ function OpenVehicleInfosMenu(vehicleData)
 	ESX.TriggerServerCallback('esx_fbi_job:getVehicleInfos', function(retrivedInfo)
 		local elements = {{label = _U('plate', retrivedInfo.plate)}}
 
-		if retrivedInfo.owner == nil then
+		if not retrivedInfo.owner then
 			table.insert(elements, {label = _U('owner_unknown')})
 		else
 			table.insert(elements, {label = _U('owner', retrivedInfo.owner)})
@@ -683,7 +694,6 @@ end
 function OpenBuyWeaponsMenu()
 	local elements = {}
 	local playerPed = PlayerPedId()
-	PlayerData = ESX.GetPlayerData()
 
 	for k,v in ipairs(Config.AuthorizedWeapons[ESX.PlayerData.job.grade_name]) do
 		local weaponNum, weapon = ESX.GetWeapon(v.weapon)
@@ -820,7 +830,7 @@ function OpenGetStocksMenu()
 			}, function(data2, menu2)
 				local count = tonumber(data2.value)
 
-				if count == nil then
+				if not count then
 					ESX.ShowNotification(_U('quantity_invalid'))
 				else
 					menu2.close()
@@ -867,7 +877,7 @@ function OpenPutStocksMenu()
 			}, function(data2, menu2)
 				local count = tonumber(data2.value)
 
-				if count == nil then
+				if not count then
 					ESX.ShowNotification(_U('quantity_invalid'))
 				else
 					menu2.close()
