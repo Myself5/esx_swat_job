@@ -1302,10 +1302,11 @@ Citizen.CreateThread(function()
 				end
 
 				for i=1, #v.Elevator, 1 do
-					local distance = GetDistanceBetweenCoords(coords, v.Elevator[i], true)
+					local distance = #(playerCoords - v.Elevator[i])
 
 					if distance < Config.DrawDistance then
 						DrawMarker(Config.MarkerType, v.Elevator[i], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
+						letSleep = false
 
 						if distance < Config.MarkerSize.x then
 							isInMarker, currentStation, currentPart, currentPartNum = true, k, 'Elevator', i
