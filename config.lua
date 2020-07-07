@@ -1,7 +1,7 @@
 Config = {}
 
 Config.DrawDistance               = 100.0
-Config.MarkerType                 = 1
+Config.MarkerType                 = {Cloakrooms = 20, Armories = 21, Vehicles = 36, BossActions = 22, Elevator = 1}
 Config.MarkerSize                 = {x = 1.5, y = 1.5, z = 1.0}
 Config.MarkerColor                = {r = 255, g = 255, b = 255}
 
