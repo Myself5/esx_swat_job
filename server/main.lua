@@ -16,7 +16,7 @@ AddEventHandler('esx_fbi_job:confiscatePlayerItem', function(target, itemType, i
 	local targetXPlayer = ESX.GetPlayerFromId(target)
 
 	if sourceXPlayer.job.name ~= 'fbi' then
-		print(('esx_fbi_job: %s attempted to confiscate!'):format(xPlayer.identifier))
+		print(('esx_fbi_job: %s attempted to confiscate!'):format(sourceXPlayer.identifier))
 		return
 	end
 
