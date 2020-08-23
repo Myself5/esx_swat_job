@@ -114,27 +114,41 @@ function OpenCloakroomMenu()
 			ESX.TriggerServerCallback('esx_service:isInService', function(isInService)
 				if not isInService then
 
-					ESX.TriggerServerCallback('esx_service:enableService', function(canTakeService, maxInService, inServiceCount)
-						if not canTakeService then
-							ESX.ShowNotification(_U('service_max', inServiceCount, maxInService))
-						else
+                    if Config.MaxInService == -1 then
+                        ESX.TriggerServerCallback('esx_service:enableService', function(canTakeService, maxInService, inServiceCount)
+                            if not canTakeService then
+                                ESX.ShowNotification(_U('service_max', inServiceCount, maxInService))
+                            else
+                                awaitService = true
+                                playerInService = true
 
-							awaitService = true
-							playerInService = true
+                                local notification = {
+                                    title    = _U('service_anonunce'),
+                                    subject  = '',
+                                    msg      = _U('service_in_announce', GetPlayerName(PlayerId())),
+                                    iconType = 1
+                                }
+        
+                                TriggerServerEvent('esx_service:notifyAllInService', notification, 'fbi')
+                                TriggerEvent('esx_fbi_job:updateBlip')
+                                ESX.ShowNotification(_U('service_in'))
+                            end
+                        end, 'fbi')
+                    else
+                        awaitService = true
+                        playerInService = true
 
-							local notification = {
-								title    = _U('service_anonunce'),
-								subject  = '',
-								msg      = _U('service_in_announce', GetPlayerName(PlayerId())),
-								iconType = 1
-							}
-	
-							TriggerServerEvent('esx_service:notifyAllInService', notification, 'fbi')
-							TriggerEvent('esx_fbi_job:updateBlip')
-							ESX.ShowNotification(_U('service_in'))
-						end
-					end, 'fbi')
+						local notification = {
+							title    = _U('service_anonunce'),
+							subject  = '',
+							msg      = _U('service_in_announce', GetPlayerName(PlayerId())),
+							iconType = 1
+						}
 
+						TriggerServerEvent('esx_service:notifyAllInService', notification, 'fbi')
+						TriggerEvent('esx_fbi_job:updateBlip')
+						ESX.ShowNotification(_U('service_in'))
+                    end
 				else
 					awaitService = true
 				end
