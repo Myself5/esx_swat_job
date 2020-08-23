@@ -1,25 +1,25 @@
 Config = {}
 
-Config.DrawDistance               = 100.0
+Config.DrawDistance               = 10.0 -- How close do you need to be for the markers to be drawn (in GTA units).
 Config.MarkerType                 = {Cloakrooms = 20, Armories = 21, Vehicles = 36, BossActions = 22, Elevator = 1}
 Config.MarkerSize                 = {x = 1.5, y = 1.5, z = 1.0}
 Config.MarkerColor                = {r = 255, g = 255, b = 255}
 
-Config.EnablePlayerManagement     = false
+Config.EnablePlayerManagement     = false -- Enable if you want society managing.
 Config.EnableArmoryManagement     = false
-Config.EnableESXIdentity          = false -- enable if you're using esx_identity
-Config.EnableLicenses             = false -- enable if you're using esx_license
+Config.EnableESXIdentity          = false -- Enable if you're using esx_identity.
+Config.EnableLicenses             = false -- Enable if you're using esx_license.
 
-Config.EnableHandcuffTimer        = true -- enable handcuff timer ? will unrestrain player after the time ends
-Config.HandcuffTimer              = 10 * 60000 -- 10 mins
+Config.EnableHandcuffTimer        = true -- Enable handcuff timer ? will unrestrain player after the time ends.
+Config.HandcuffTimer              = 10 * 60000 -- 10 minutes.
 
-Config.EnableJobBlip              = false -- enable blips for agent on duty, requires esx_society
-Config.EnablePoliceFine           = true -- enable fine, requires esx_policejob
+Config.EnableJobBlip              = false -- Enable blips for agent on duty, requires esx_society.
+Config.EnablePoliceFine           = true -- Enable fine, requires esx_policejob.
 
-Config.EnableESXService           = false -- enable esx service?
-Config.MaxInService               = 5
+Config.EnableESXService           = false -- Enable esx service?
+Config.MaxInService               = -1 -- How much people can be in service at once?
 
-Config.Locale                     = 'fr' -- replace with the agreed language, available in the locales/ folder. example 'en'.
+Config.Locale                     = 'fr'
 
 Config.FBIStations = {
 	FBI = {
