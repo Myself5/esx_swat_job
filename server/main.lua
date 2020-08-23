@@ -2,12 +2,12 @@ ESX = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-if Config.EnableESXService then
+if Config.EnableESXService and Config.MaxInService ~= -1 then
 	TriggerEvent('esx_service:activateService', 'fbi', Config.MaxInService)
 end
 
 TriggerEvent('esx_phone:registerNumber', 'fbi', _U('alert_fbi'), true, true)
-TriggerEvent('esx_society:registerSociety', 'fbi', 'FBI', 'society_fbi', 'society_fbi', 'society_fbi', {type = 'private'})
+TriggerEvent('esx_society:registerSociety', 'fbi', 'FBI', 'society_fbi', 'society_fbi', 'society_fbi', {type = 'public'})
 
 RegisterNetEvent('esx_fbi_job:confiscatePlayerItem')
 AddEventHandler('esx_fbi_job:confiscatePlayerItem', function(target, itemType, itemName, amount)
