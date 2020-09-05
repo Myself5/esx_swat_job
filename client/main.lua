@@ -18,20 +18,6 @@ Citizen.CreateThread(function()
 	ESX.PlayerData = ESX.GetPlayerData()
 end)
 
-function TeleportFadeEffect(entity, coords)
-	Citizen.CreateThread(function()
-		DoScreenFadeOut(800)
-
-		while not IsScreenFadedOut() do
-			Citizen.Wait(0)
-		end
-
-		ESX.Game.Teleport(entity, coords, function()
-			DoScreenFadeIn(800)
-		end)
-	end)
-end
-
 function cleanPlayer(playerPed)
 	SetPedArmour(playerPed, 0)
 	ClearPedBloodDamage(playerPed)
@@ -911,29 +897,33 @@ function OpenPutStocksMenu()
 	end)
 end
 
-function OpenElevator()
-	local elements = {
-		{ label = _U('elevator_top'), value = 'elevator_top' },
-		{ label = _U('elevator_down'), value = 'elevator_down' },
-		{ label = _U('elevator_parking'), value = 'elevator_parking' }
-	}
+function OpenElevator(station)
+    local elements = {}
+    local playerPed = PlayerPedId()
+    local elevator = Config.FBIStations[station].Elevator
+
+    for i=1, #elevator, 1 do
+        table.insert(elements, {label = elevator[i].label, coords = elevator[i].coords})
+    end
 
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'elevator', {
-		title    = _U('elevator'),
-		align    = 'top-left',
+		title = _U('elevator'),
+		align = 'top-left',
 		elements = elements
 	}, function(data, menu)
-		if data.current.value == 'elevator_top' then
-			TeleportFadeEffect(PlayerPedId(), vector3(136.0, -761.8, 241.1))
-		end
-
-		if data.current.value == 'elevator_down' then
-			TeleportFadeEffect(PlayerPedId(), vector3(136.0, -761.5, 44.7))
-		end
-
-		if data.current.value == 'elevator_parking' then
-			TeleportFadeEffect(PlayerPedId(), vector3(65.4, -749.6, 30.6))
-		end
+		if data.current.label then
+			Citizen.CreateThread(function()
+                DoScreenFadeOut(800)
+        
+                while not IsScreenFadedOut() do
+                    Citizen.Wait(0)
+                end
+        
+                ESX.Game.Teleport(playerPed, data.current.coords, function()
+                    DoScreenFadeIn(800)
+                end)
+            end)
+        end
 
 		menu.close()
 	end, function(data, menu)
@@ -993,7 +983,7 @@ AddEventHandler('esx_fbi_job:hasEnteredMarker', function(station, part, partNum)
 	elseif part == 'Elevator' then
 		CurrentAction     = 'menu_elevator'
 		CurrentActionMsg  = _U('open_elevator')
-		CurrentActionData = {}
+		CurrentActionData = {station = station}
 	end
 end)
 
@@ -1238,10 +1228,10 @@ Citizen.CreateThread(function()
 	for k,v in pairs(Config.FBIStations) do
 		local blip = AddBlipForCoord(v.Blip.Coords)
 
-		SetBlipSprite (blip, v.Blip.Sprite)
+		SetBlipSprite(blip, v.Blip.Sprite)
 		SetBlipDisplay(blip, v.Blip.Display)
-		SetBlipScale  (blip, v.Blip.Scale)
-		SetBlipColour (blip, v.Blip.Colour)
+		SetBlipScale(blip, v.Blip.Scale)
+		SetBlipColour(blip, v.Blip.Colour)
 		SetBlipAsShortRange(blip, true)
 
 		BeginTextCommandSetBlipName('STRING')
@@ -1435,8 +1425,6 @@ Citizen.CreateThread(function()
 					else
 						ESX.ShowNotification(_U('service_not'))
 					end
-				elseif CurrentAction == 'delete_vehicle' then
-					ESX.Game.DeleteVehicle(CurrentActionData.vehicle)
 				elseif CurrentAction == 'menu_boss_actions' then
 					ESX.UI.Menu.CloseAll()
 					TriggerEvent('esx_society:openBossMenu', 'fbi', function(data, menu)
@@ -1445,11 +1433,11 @@ Citizen.CreateThread(function()
 						CurrentAction     = 'menu_boss_actions'
 						CurrentActionMsg  = _U('open_bossmenu')
 						CurrentActionData = {}
-					end, { wash = false }) -- disable washing money
+					end, {wash = false}) -- disable washing money
 				elseif CurrentAction == 'remove_entity' then
 					DeleteEntity(CurrentActionData.entity)
 				elseif CurrentAction == 'menu_elevator' then
-					OpenElevator()
+					OpenElevator(CurrentActionData.station)
 				end
 
 				CurrentAction = nil
@@ -1496,7 +1484,6 @@ end
 
 RegisterNetEvent('esx_fbi_job:updateBlip')
 AddEventHandler('esx_fbi_job:updateBlip', function()
-	
 	-- Refresh all blips
 	for k, existingBlip in pairs(blipsCops) do
 		RemoveBlip(existingBlip)
