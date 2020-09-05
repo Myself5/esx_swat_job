@@ -56,9 +56,9 @@ Config.FBIStations = {
 		},
 
 		Elevator = {
-			vector3(136.0, -761.8, 241.1),
-			vector3(136.0, -761.5, 44.7),
-			vector3(65.4, -749.6, 30.6)
+            {label = _U('elevator_top'), coords = vector3(136.0, -761.8, 241.1)},
+            {label = _U('elevator_down'), coords = vector3(136.0, -761.5, 44.7)},
+            {label = _U('elevator_parking'), coords = vector3(65.4, -749.6, 30.6)}
 		}
 	}
 }
