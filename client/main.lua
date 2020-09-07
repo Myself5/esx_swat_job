@@ -898,13 +898,15 @@ function OpenPutStocksMenu()
 end
 
 function OpenElevator(station)
-    local elements = {}
-    local playerPed = PlayerPedId()
-    local elevator = Config.FBIStations[station].Elevator
+	local elements = {}
+	local playerPed = PlayerPedId()
+	local elevator = Config.FBIStations[station].Elevator
 
-    for i=1, #elevator, 1 do
-        table.insert(elements, {label = elevator[i].label, coords = elevator[i].coords})
-    end
+	for i=1, #elevator, 1 do
+		table.insert(elements, {label = elevator[i].label, coords = elevator[i].coords})
+	end
+	
+	ESX.UI.Menu.CloseAll()
 
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'elevator', {
 		title = _U('elevator'),
@@ -913,25 +915,21 @@ function OpenElevator(station)
 	}, function(data, menu)
 		if data.current.label then
 			Citizen.CreateThread(function()
-                DoScreenFadeOut(800)
-        
-                while not IsScreenFadedOut() do
-                    Citizen.Wait(0)
-                end
-        
-                ESX.Game.Teleport(playerPed, data.current.coords, function()
-                    DoScreenFadeIn(800)
-                end)
-            end)
-        end
+				DoScreenFadeOut(800)
+		
+				while not IsScreenFadedOut() do
+					Citizen.Wait(0)
+				end
+		
+				ESX.Game.Teleport(playerPed, data.current.coords, function()
+					DoScreenFadeIn(800)
+				end)
+			end)
+		end
 
 		menu.close()
 	end, function(data, menu)
 		menu.close()
-		
-		CurrentAction     = 'menu_elevator'
-		CurrentActionMsg  = _U('open_elevator')
-		CurrentActionData = {}
 	end)
 end
 
@@ -1307,10 +1305,10 @@ Citizen.CreateThread(function()
 				end
 
 				for i=1, #v.Elevator, 1 do
-					local distance = #(playerCoords - v.Elevator[i])
+					local distance = #(playerCoords - v.Elevator[i].coords)
 
 					if distance < Config.DrawDistance then
-						DrawMarker(Config.MarkerType.Elevator, v.Elevator[i], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
+						DrawMarker(Config.MarkerType.Elevator, v.Elevator[i].coords, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, true, false, false, false)
 						letSleep = false
 
 						if distance < Config.MarkerSize.x then
@@ -1330,9 +1328,7 @@ Citizen.CreateThread(function()
 				end
 
 				HasAlreadyEnteredMarker = true
-				LastStation             = currentStation
-				LastPart                = currentPart
-				LastPartNum             = currentPartNum
+				LastStation, LastPart, LastPartNum = currentStation, currentPart, currentPartNum
 
 				TriggerEvent('esx_fbi_job:hasEnteredMarker', currentStation, currentPart, currentPartNum)
 			end
@@ -1410,17 +1406,13 @@ Citizen.CreateThread(function()
 				if CurrentAction == 'menu_cloakroom' then
 					OpenCloakroomMenu()
 				elseif CurrentAction == 'menu_armory' then
-					if not Config.EnableESXService then
-						OpenArmoryMenu(CurrentActionData.station)
-					elseif playerInService then
+					if not Config.EnableESXService and playerInService then
 						OpenArmoryMenu(CurrentActionData.station)
 					else
 						ESX.ShowNotification(_U('service_not'))
 					end
 				elseif CurrentAction == 'menu_vehicle_spawner' then
-					if not Config.EnableESXService then
-						OpenVehicleSpawnerMenu('car', CurrentActionData.station, CurrentActionData.part, CurrentActionData.partNum)
-					elseif playerInService then
+					if not Config.EnableESXService and playerInService then
 						OpenVehicleSpawnerMenu('car', CurrentActionData.station, CurrentActionData.part, CurrentActionData.partNum)
 					else
 						ESX.ShowNotification(_U('service_not'))
@@ -1442,12 +1434,10 @@ Citizen.CreateThread(function()
 
 				CurrentAction = nil
 			end
-		end -- CurrentAction end
+		end
 
 		if IsControlJustReleased(0, 167) and not isDead and ESX.PlayerData.job and ESX.PlayerData.job.name == 'fbi' and not ESX.UI.Menu.IsOpen('default', GetCurrentResourceName(), 'fbi_actions') then
-			if not Config.EnableESXService then
-				OpenFBIActionsMenu()
-			elseif playerInService then
+			if not Config.EnableESXService and playerInService then
 				OpenFBIActionsMenu()
 			else
 				ESX.ShowNotification(_U('service_not'))
