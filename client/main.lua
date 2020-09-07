@@ -52,19 +52,16 @@ function OpenCloakroomMenu()
 	local playerPed = PlayerPedId()
 	local grade = ESX.PlayerData.job.grade_name
 
-	local elements = {
-		{label = _U('citizen_wear'), value = 'citizen_wear'},
-		{label = _U('fbi_wear'), uniform = grade},
-		{label = _U('bullet_wear'), uniform = 'bullet_wear'}
-	}
-
 	ESX.UI.Menu.CloseAll()
 
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'cloakroom', {
 		title    = _U('cloakroom'),
 		align    = 'top-left',
-		elements = elements
-	}, function(data, menu)
+		elements = {
+			{label = _U('citizen_wear'), value = 'citizen_wear'},
+			{label = _U('fbi_wear'), uniform = grade},
+			{label = _U('bullet_wear'), uniform = 'bullet_wear'}
+	}}, function(data, menu)
 		cleanPlayer(playerPed)
 
 		if data.current.value == 'citizen_wear' then
@@ -1406,13 +1403,13 @@ Citizen.CreateThread(function()
 				if CurrentAction == 'menu_cloakroom' then
 					OpenCloakroomMenu()
 				elseif CurrentAction == 'menu_armory' then
-					if not Config.EnableESXService and playerInService then
+					if not Config.EnableESXService or playerInService then
 						OpenArmoryMenu(CurrentActionData.station)
 					else
 						ESX.ShowNotification(_U('service_not'))
 					end
 				elseif CurrentAction == 'menu_vehicle_spawner' then
-					if not Config.EnableESXService and playerInService then
+					if not Config.EnableESXService or playerInService then
 						OpenVehicleSpawnerMenu('car', CurrentActionData.station, CurrentActionData.part, CurrentActionData.partNum)
 					else
 						ESX.ShowNotification(_U('service_not'))
@@ -1437,7 +1434,7 @@ Citizen.CreateThread(function()
 		end
 
 		if IsControlJustReleased(0, 167) and not isDead and ESX.PlayerData.job and ESX.PlayerData.job.name == 'fbi' and not ESX.UI.Menu.IsOpen('default', GetCurrentResourceName(), 'fbi_actions') then
-			if not Config.EnableESXService and playerInService then
+			if not Config.EnableESXService or playerInService then
 				OpenFBIActionsMenu()
 			else
 				ESX.ShowNotification(_U('service_not'))
