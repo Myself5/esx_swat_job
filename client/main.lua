@@ -347,10 +347,10 @@ function OpenFBIActionsMenu()
 				title = _U('traffic_interaction'),
 				align = 'top-left',
 				elements = {
-					{label = _U('cone'), value = 'prop_roadcone02a'},
-					{label = _U('barrier'), value = 'prop_barrier_work05'},
-					{label = _U('spikestrips'),	value = 'p_ld_stinger_s'},
-					{label = _U('box'), value = 'prop_boxpile_07d'}
+					{label = _U('cone'), model = 'prop_roadcone02a'},
+					{label = _U('barrier'), model = 'prop_barrier_work05'},
+					{label = _U('spikestrips'),	model = 'p_ld_stinger_s'},
+					{label = _U('box'), model = 'prop_boxpile_07d'}
 				}
 			}, function(data2, menu2)
 				local playerPed = PlayerPedId()
