@@ -2,7 +2,7 @@ Locales['fr'] = {
   -- Cloakroom
   ['cloakroom'] = 'vestiaire',
   ['citizen_wear'] = 'tenue Civil',
-  ['fbi_wear'] = 'tenue FBI',
+  ['swat_wear'] = 'tenue SWAT',
   ['bullet_wear'] = 'gilet pare-balles',
   ['no_outfit'] = 'il n\'y a pas d\'uniforme à votre taille...',
   ['open_cloackroom'] = 'appuyez sur ~INPUT_CONTEXT~ pour vous changer',
@@ -66,7 +66,7 @@ Locales['fr'] = {
   ['service_out'] = 'vous avez terminé votre service.',
   ['service_out_announce'] = 'l\'officier ~y~%s~s~ a quitté son service.',
   -- Action Menu
-  ['fbi_actions'] = 'FBI',
+  ['swat_actions'] = 'SWAT',
   ['citizen_interaction'] = 'interaction citoyen',
   ['vehicle_interaction'] = 'interaction véhicule',
   ['object_spawner'] = 'placer objets',
@@ -84,7 +84,7 @@ Locales['fr'] = {
   ['license_revoked'] = 'votre ~b~%s~s~ a été ~y~révoqué~s~!',
   ['licence_you_revoked'] = 'vous avez révoqué un ~b~%s~s~ qui appartenait à ~y~%s~s~',
   ['no_players_nearby'] = 'aucun joueur à proximité',
-  ['being_searched'] = 'vous êtes ~y~recherché(e)~s~ par le ~b~FBI~s~',
+  ['being_searched'] = 'vous êtes ~y~recherché(e)~s~ par le ~b~SWAT~s~',
   -- Vehicle interaction
   ['vehicle_info'] = 'infos véhicule',
   ['pick_lock'] = 'crocheter véhicule',
@@ -185,12 +185,12 @@ Locales['fr'] = {
   ['have_deposited'] = 'vous avez déposé ~y~%sx~s~ ~b~%s~s~',
   ['quantity'] = 'quantité',
   ['inventory'] = 'inventaire',
-  ['fbi_stock'] = 'coffre du fbi',
+  ['swat_stock'] = 'coffre du swat',
   -- Misc
   ['remove_prop'] = 'appuyez sur ~INPUT_CONTEXT~ pour enlever l\'objet',
-  ['map_blip'] = 'FBI',
+  ['map_blip'] = 'SWAT',
   ['unrestrained_timer'] = 'vous sentez que vos menottes deviennent fragiles.',
   -- Notifications
-  ['alert_fbi'] = 'alerte fbi',
-  ['phone_fbi'] = 'fbi',
+  ['alert_swat'] = 'alerte swat',
+  ['phone_swat'] = 'swat',
 }

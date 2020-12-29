@@ -1,9 +1,9 @@
 fx_version 'adamant'
 game 'gta5'
 
-name 'ESX FBI Job'
-description 'This script add the fbi job, for esx framework.'
-website 'https://github.com/ESX-FRANCE/esx_fbi_job'
+name 'ESX SWAT Job'
+description 'This script add the swat job, for esx framework.'
+website 'https://github.com/Myself5/esx_swat_job'
 version '0.0.4'
 
 server_scripts {

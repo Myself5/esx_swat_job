@@ -6,15 +6,15 @@ function OpenVehicleSpawnerMenu(type, station, part, partNum)
 	ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'vehicle', {
 		title    = _U('garage_title'),
 		align    = 'top-left',
-			elements = {	
-			{label = _U('garage_storeditem'), action = 'garage'},	
-			{label = _U('garage_storeitem'), action = 'store_garage'},	
-			{label = _U('garage_buyitem'), action = 'buy_vehicle'}	
+			elements = {
+			{label = _U('garage_storeditem'), action = 'garage'},
+			{label = _U('garage_storeitem'), action = 'store_garage'},
+			{label = _U('garage_buyitem'), action = 'buy_vehicle'}
 	}}, function(data, menu)
 		if data.current.action == 'buy_vehicle' then
 			local shopElements = {}	
-			local shopCoords = Config.FBIStations[station][part][partNum].InsideShop	
-			local authorizedVehicles = Config.AuthorizedVehicles[type][ESX.PlayerData.job.grade_name]
+			local shopCoords = Config.SWATStations[station][part][partNum].InsideShop	
+			local authorizedVehicles = Config.AuthorizedVehicles[type][ESX.PlayerData.job2.grade_name]
 
 			if authorizedVehicles then
 				if #authorizedVehicles > 0 then	
@@ -22,15 +22,15 @@ function OpenVehicleSpawnerMenu(type, station, part, partNum)
 						if IsModelInCdimage(vehicle.model) then	
 							local vehicleLabel = GetLabelText(GetDisplayNameFromVehicleModel(vehicle.model))
 
-							table.insert(shopElements, {	
+							table.insert(shopElements, {
 								label = ('%s - <span style="color:green;">%s</span>'):format(vehicleLabel, _U('shop_item', ESX.Math.GroupDigits(vehicle.price))),	
-								name  = vehicleLabel,	
-								model = vehicle.model,	
-								price = vehicle.price,	
-								props = vehicle.props,	
-								type  = type	
-							})	
-						end	
+								name  = vehicleLabel,
+								model = vehicle.model,
+								price = vehicle.price,
+								props = vehicle.props,
+								type  = type
+							})
+						end
 					end
 
 					if #shopElements > 0 then
@@ -42,7 +42,7 @@ function OpenVehicleSpawnerMenu(type, station, part, partNum)
 					ESX.ShowNotification(_U('garage_notauthorized'))
 				end
 			else	
-				ESX.ShowNotification(_U('garage_notauthorized'))	
+				ESX.ShowNotification(_U('garage_notauthorized'))
 			end
 		elseif data.current.action == 'garage' then
 			local garage = {}
@@ -135,7 +135,7 @@ function StoreNearbyVehicle(playerCoords)
 		return
 	end
 
-	ESX.TriggerServerCallback('esx_fbi_job:storeNearbyVehicle', function(storeSuccess, foundNum)
+	ESX.TriggerServerCallback('esx_swat_job:storeNearbyVehicle', function(storeSuccess, foundNum)
 		if storeSuccess then
 			local vehicleId = vehiclePlates[foundNum]
 			local attempts = 0
@@ -184,7 +184,7 @@ function StoreNearbyVehicle(playerCoords)
 end
 
 function GetAvailableVehicleSpawnPoint(station, part, partNum)
-	local spawnPoints = Config.FBIStations[station][part][partNum].SpawnPoints
+	local spawnPoints = Config.SWATStations[station][part][partNum].SpawnPoints
 	local found, foundSpawnPoint = false, nil
 
 	for i=1, #spawnPoints, 1 do
@@ -224,7 +224,7 @@ function OpenShopMenu(elements, restoreCoords, shopCoords)
 				local props    = ESX.Game.GetVehicleProperties(vehicle)
 				props.plate    = newPlate
 
-				ESX.TriggerServerCallback('esx_fbi_job:buyJobVehicle', function (bought)
+				ESX.TriggerServerCallback('esx_swat_job:buyJobVehicle', function (bought)
 					if bought then
 						ESX.ShowNotification(_U('vehicleshop_bought', data.current.name, ESX.Math.GroupDigits(data.current.price)))
 
